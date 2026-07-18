@@ -35,6 +35,8 @@
   }
   nav button.active { border-color: #a78bfa; background: #2a1a4a; color: #fff; }
   nav button.done::after { content: " ✓"; color: #34d399; }
+  nav button.locked { opacity: .38; }
+  nav button.locked::before { content: "🔒 "; font-size: 11px; }
 
   main { max-width: 760px; margin: 0 auto; padding: 6px 16px 40px; }
   section { display: none; }
@@ -93,6 +95,7 @@
   .btn.secondary { background: #1a1a2e; border: 1.5px solid #3d3d5c; color: #c0c0d8; font-weight: 600; }
   .btn.small { font-size: 14px; padding: 10px 16px; }
   .btn:active { opacity: .8; }
+  .btn:disabled { opacity: .4; }
   .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 
   .choice {
@@ -127,8 +130,7 @@
     padding: 12px 14px; margin-bottom: 9px; cursor: pointer;
   }
   .post-card.picked { border-color: #60a5fa; background: #142138; }
-  .post-card h4 { font-size: 14px; color: #e6e6f5; margin-bottom: 2px; }
-  .post-card p { font-size: 13px; color: #9a9ab5; }
+  .post-card p { font-size: 13px; color: #c9c9de; }
 
   .copybox {
     background: #0f0f1a; border: 1px dashed #4a4a6a; border-radius: 10px;
@@ -136,12 +138,19 @@
     font-family: ui-monospace, Menlo, monospace;
   }
 
-  .done-row { margin-top: 16px; text-align: center; }
+  .reqs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .req-chip {
+    font-size: 12px; font-weight: 600; border-radius: 999px; padding: 6px 12px;
+    background: #1a1a2e; border: 1.5px solid #3d3d5c; color: #8b8ba7;
+  }
+  .req-chip.met { border-color: #34d399; color: #7de8bc; }
+  .done-row { margin-top: 10px; text-align: center; }
   .done-btn {
     -webkit-appearance: none; background: #10291f; border: 1.5px solid #34d399; color: #7de8bc;
     border-radius: 12px; font-size: 15px; font-weight: 700; padding: 13px 22px; cursor: pointer;
   }
   .done-btn.checked { background: #34d399; color: #06281a; }
+  .done-btn:disabled { opacity: .35; }
 
   .toolgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
   .tool {
@@ -150,11 +159,13 @@
   .tool h4 { font-size: 14px; color: #e6e6f5; margin-bottom: 3px; }
   .tool p { font-size: 12px; color: #9a9ab5; line-height: 1.45; }
 
-  .predict-word {
+  .predict-word, .chipbtn {
     -webkit-appearance: none; background: #2a1a4a; border: 1.5px solid #a78bfa; color: #d6c6ff;
     border-radius: 10px; font-size: 15px; font-weight: 600; padding: 10px 14px; cursor: pointer;
     margin: 0 6px 8px 0;
   }
+  .chipbtn { background: #0f0f1a; border-color: #3d3d5c; color: #c0c0d8; font-size: 13px; }
+  .chipbtn.on { background: #2a1a4a; border-color: #a78bfa; color: #d6c6ff; }
   .sentence-box {
     background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
     padding: 14px; font-size: 17px; line-height: 1.5; min-height: 56px; margin-bottom: 12px;
@@ -163,68 +174,157 @@
     display: inline-block; background: #142138; border: 1.5px solid #60a5fa; color: #9ec8ff;
     border-radius: 999px; font-size: 14px; font-weight: 700; padding: 8px 16px; margin-top: 8px;
   }
+
+  /* real-or-AI face-off */
+  .faceoff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+  .faceoff button {
+    -webkit-appearance: none; padding: 0; border: 2.5px solid #3d3d5c; border-radius: 14px;
+    overflow: hidden; background: #0f0f1a; cursor: pointer;
+  }
+  .faceoff img { width: 100%; display: block; }
+  .faceoff button.win { border-color: #34d399; }
+  .faceoff button.lose { border-color: #f87171; }
+
+  /* trainer */
+  .train-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
+    padding: 10px 13px; margin-bottom: 8px;
+  }
+  .train-item span { font-size: 14px; color: #e0e0f0; flex: 1; line-height: 1.35; }
+  .train-item .tbtns { display: flex; gap: 6px; }
+  .train-item button {
+    -webkit-appearance: none; border: 1.5px solid #3d3d5c; background: #1a1a2e; color: #c0c0d8;
+    border-radius: 9px; font-size: 12px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+  }
+  .train-item button.sel-spam { border-color: #f87171; color: #f8a3a3; background: #2b1420; }
+  .train-item button.sel-ok { border-color: #34d399; color: #7de8bc; background: #10291f; }
+
+  /* bias game */
+  .profile {
+    background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
+    padding: 11px 14px; margin-bottom: 8px; font-size: 14px; color: #e0e0f0; line-height: 1.4;
+  }
+  .profile b { color: #e6e6f5; }
+  .profile .hire-btns { display: flex; gap: 8px; margin-top: 8px; }
+  .profile button {
+    -webkit-appearance: none; flex: 1; border: 1.5px solid #3d3d5c; background: #1a1a2e;
+    color: #c0c0d8; border-radius: 9px; font-size: 13px; font-weight: 700; padding: 9px; cursor: pointer;
+  }
+  .profile.revealed { border-color: #a78bfa; }
+
+  /* chat */
+  .chatbox { background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 14px; overflow: hidden; }
+  .chat-log { max-height: 340px; overflow-y: auto; padding: 14px; -webkit-overflow-scrolling: touch; }
+  .msg { max-width: 85%; border-radius: 14px; padding: 10px 13px; margin-bottom: 9px;
+    font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+  .msg.user { background: #2a1a4a; border: 1px solid #a78bfa55; margin-left: auto; color: #eee6ff; }
+  .msg.bot { background: #1a1a2e; border: 1px solid #2d2d4a; color: #d5d5e8; }
+  .chat-input { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #2d2d4a; }
+  .chat-input input {
+    flex: 1; background: #1a1a2e; border: 1px solid #3d3d5c; border-radius: 10px;
+    color: #f0f0f0; font-size: 16px; padding: 11px 13px; outline: none; -webkit-appearance: none;
+  }
+  .chat-input button {
+    -webkit-appearance: none; background: linear-gradient(135deg, #7c5cf0, #4f8ef7); border: none;
+    color: #fff; border-radius: 10px; font-size: 15px; font-weight: 700; padding: 11px 16px; cursor: pointer;
+  }
+  .chat-offline { padding: 12px 14px; font-size: 13px; color: #f8c471; background: #241c10;
+    border-top: 1px solid #3d3d5c; display: none; }
+
+  /* sentiment */
+  .senti-input { display: flex; gap: 8px; margin: 10px 0; }
+  .senti-input input {
+    flex: 1; background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
+    color: #f0f0f0; font-size: 16px; padding: 11px 13px; outline: none; -webkit-appearance: none;
+  }
+  .senti-word { display: inline-block; border-radius: 6px; padding: 2px 7px; margin: 2px;
+    font-size: 13px; font-weight: 600; }
+  .senti-word.pos { background: #10291f; color: #7de8bc; border: 1px solid #34d399; }
+  .senti-word.neg { background: #2b1420; color: #f8a3a3; border: 1px solid #f87171; }
+  .senti-word.neu { background: #1a1a2e; color: #8b8ba7; border: 1px solid #3d3d5c; }
+
+  .selfcheck {
+    display: flex; align-items: center; gap: 12px; background: #0f0f1a;
+    border: 1.5px solid #3d3d5c; border-radius: 12px; padding: 13px 15px; margin-bottom: 9px;
+    cursor: pointer; font-size: 15px; color: #e0e0f0;
+  }
+  .selfcheck.on { border-color: #34d399; }
+  .selfcheck .box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #3d3d5c;
+    display: flex; align-items: center; justify-content: center; font-size: 14px; color: #34d399; }
+  .selfcheck.on .box { border-color: #34d399; }
 </style>
 </head>
 <body>
 
 <header>
   <h1>Digital Media &amp; AI</h1>
-  <p>Project Hōkūlani Media Lab · work at your own pace</p>
+  <p>Project Hōkūlani Media Lab · finish each station to unlock the next</p>
 </header>
 
 <div class="progress-wrap">
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-  <div class="progress-label" id="progressLabel">0 of 7 stations complete</div>
+  <div class="progress-label" id="progressLabel"></div>
 </div>
 
 <nav id="nav"></nav>
 
 <main id="main">
 
-<!-- ============ STATION 0: START ============ -->
+<!-- ============ 1 START ============ -->
 <section data-id="start">
   <div class="card">
-    <span class="badge">Station 1</span>
-    <span class="badge time">10 min</span>
+    <span class="badge">Station 1</span><span class="badge time">10 min</span>
     <h2>🏁 Welcome to the Media Lab</h2>
-    <p style="margin-top:8px">Today you'll learn how AI creates the media you see every day — and you'll use it to make your own. By the end you will have:</p>
+    <p style="margin-top:8px">Today you'll learn how AI creates the media you see every day — and use it to make your own. By the end you will have:</p>
     <ul>
       <li>🖼️ An AI-generated <b>ad campaign</b> you designed with prompts</li>
       <li>🎬 A <b>travel video</b> with an AI voiceover, made in CapCut</li>
-      <li>🧠 The skills to tell what's real, what's AI, and how the algorithm sees <i>you</i></li>
+      <li>🧠 The skills to spot fakes, out-think the algorithm, and use AI fairly</li>
     </ul>
   </div>
   <div class="card">
     <h3>How today works</h3>
     <ul>
-      <li>Move through the stations <b>at your own pace</b> using the buttons at the top.</li>
+      <li>Stations unlock <b>in order</b> — finish the activities in each one to open the next.</li>
+      <li>The chips above the green button show <b>what's left</b> in each station.</li>
       <li>When you see a <b style="color:#a78bfa">⏸ CHECKPOINT</b> card, <b>stop</b> — we do that part together on the big screen.</li>
-      <li>Tap <b style="color:#7de8bc">Mark station complete</b> when you finish each station.</li>
       <li>Stuck? Ask a neighbor first, then raise your hand.</li>
     </ul>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="start">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="start"></div>
+  <div class="done-row"><button class="done-btn" data-done="start">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 1: SPOT THE AI ============ -->
+<!-- ============ 2 SPOT THE AI ============ -->
 <section data-id="spot">
   <div class="card">
-    <span class="badge">Station 2</span>
-    <span class="badge time">20 min</span>
+    <span class="badge">Station 2</span><span class="badge time">20 min</span>
     <h2>🕵️ Spot the AI</h2>
-    <p style="margin-top:8px">AI can now make videos of real people saying things they never said. These are called <b>deepfakes</b>.</p>
+    <p style="margin-top:8px">AI can now make videos of real people saying things they never said — and photos of moments that never happened.</p>
+    <img src="img/lincoln.jpg" alt="AI-generated Lincoln selfie" style="width:100%;border-radius:12px;border:1px solid #2d2d4a;margin:10px 0 4px">
+    <p class="muted">Abraham Lincoln's selfie at Gettysburg, 1863. (Cameras that could do this didn't exist. Neither did selfies. Or Twitter.)</p>
     <div class="key"><b>Deepfake:</b> media (usually video or audio) created or altered by AI to make it look like someone said or did something they didn't.</div>
   </div>
 
   <div class="checkpoint">
     <div class="cp-icon">⏸</div>
     <h3>CHECKPOINT — Eyes up front</h3>
-    <p>We're watching the deepfake videos <b>together on the big screen</b>. Don't play videos on your iPad. When the videos end, come back here.</p>
+    <p>We're watching the deepfake videos <b>together on the big screen</b>. When they end, come back here and try the game below.</p>
   </div>
 
   <div class="card">
-    <h3>Your turn: could you tell?</h3>
-    <p class="muted" style="margin-bottom:10px">Tap the answer you think is right.</p>
+    <h3>🎮 Real or AI? Tap the FAKE.</h3>
+    <p class="muted" style="margin-bottom:8px">One of these photos of actress Maggie Smith is AI-generated. Tap the fake one.</p>
+    <div class="faceoff" id="faceoff">
+      <button data-fake="0"><img src="img/face_real.jpg" alt="Photo A"></button>
+      <button data-fake="1"><img src="img/face_ai.jpg" alt="Photo B"></button>
+    </div>
+    <div class="feedback" id="faceoffFb"></div>
+  </div>
+
+  <div class="card">
+    <h3>Check yourself</h3>
     <div id="spotQuiz"></div>
   </div>
 
@@ -235,124 +335,186 @@
       <li>If video can be faked, how should that change what you trust online?</li>
     </ul>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="spot">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="spot"></div>
+  <div class="done-row"><button class="done-btn" data-done="spot">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 2: AI DECODED ============ -->
+<!-- ============ 3 AI DECODED ============ -->
 <section data-id="decoded">
   <div class="card">
-    <span class="badge">Station 3</span>
-    <span class="badge time">25 min</span>
+    <span class="badge">Station 3</span><span class="badge time">25 min</span>
     <h2>🧠 AI, Decoded</h2>
     <p style="margin-top:8px">So what actually <i>is</i> AI?</p>
     <div class="key"><b>Artificial Intelligence:</b> machines that can <b>learn from data</b> and perform tasks that normally require human intelligence.</div>
     <p>Not hardware. Not just any computer code. The key word is <b>learn</b> — nobody writes rules like "a cat has pointy ears." The AI figures that out itself by studying millions of examples.</p>
-  </div>
-
-  <div class="card">
-    <h3>How does it learn?</h3>
     <div class="key"><b>The core idea:</b> AI learns <b>patterns from huge amounts of data</b>, then uses those patterns to make predictions or create new things.</div>
-    <ul>
-      <li>📥 <b>Data in</b> — millions of photos, sentences, songs, videos</li>
-      <li>🔍 <b>Find patterns</b> — what usually follows what? what goes together?</li>
-      <li>📤 <b>Predict &amp; create</b> — use the patterns to guess the next word, draw a new image, write a script</li>
-    </ul>
   </div>
 
   <div class="card">
-    <h3>🔮 Try it: be the AI</h3>
-    <p>Predictive text is AI in your pocket. This mini-AI learned patterns from example sentences. Tap the word you think comes next — you're doing exactly what AI does.</p>
+    <h3>🔮 Game 1: Be the AI (predictive text)</h3>
+    <p>This mini-AI learned patterns from example sentences. Tap the word you think comes next — you're doing exactly what AI does. <b>Finish one full sentence.</b></p>
     <div class="sentence-box" id="predictSentence">Aloha, today we are going to the</div>
     <div id="predictChoices"></div>
-    <p class="muted">Notice: the AI never "understands" — it just knows which words <i>usually follow</i> other words, from patterns in its data. ChatGPT works the same way, with trillions of examples.</p>
+    <p class="muted">The AI never "understands" — it just knows which words <i>usually follow</i> other words. ChatGPT works the same way, with trillions of examples.</p>
+  </div>
+
+  <div class="card">
+    <h3>🤖 Game 2: Train your own AI</h3>
+    <p>Now <b>you</b> supply the training data. Label these 6 messages as <b>SPAM</b> or <b>OK</b> — your labels are the data your AI learns from:</p>
+    <div id="trainSet"></div>
+    <div id="trainResult"></div>
   </div>
 
   <div class="card">
     <h3>Check yourself</h3>
     <div id="decodedQuiz"></div>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="decoded">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="decoded"></div>
+  <div class="done-row"><button class="done-btn" data-done="decoded">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 3: PROMPT LAB ============ -->
+<!-- ============ 4 ETHICS ============ -->
+<section data-id="ethics">
+  <div class="card">
+    <span class="badge">Station 4</span><span class="badge time">20 min</span>
+    <h2>⚖️ AI Ethics: Garbage In, Garbage Out</h2>
+    <p style="margin-top:8px">You just trained an AI with your own labels. Here's the dark side: <b>if the training data is unfair, the AI learns to be unfair</b> — at superhuman speed, and nobody can see it happening.</p>
+    <div class="key"><b>AI bias:</b> when an AI treats people unfairly because the data it learned from was incomplete, skewed, or reflected human prejudice.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎮 You are the hiring AI</h3>
+    <p>A company trained you on the last 8 people they hired. Study your training data:</p>
+    <div class="copybox" style="font-size:13px">
+      ✅ HIRED: Kea — Mauka High, robotics club<br>
+      ✅ HIRED: Justin — Mauka High, robotics club<br>
+      ✅ HIRED: Malia — Mauka High, surf team<br>
+      ✅ HIRED: Trevor — Mauka High, robotics club<br>
+      ✅ HIRED: Kainoa — Mauka High, chess club<br>
+      ✅ HIRED: Sarah — Mauka High, robotics club<br>
+      ✅ HIRED: Devin — Makai High, robotics club<br>
+      ✅ HIRED: Ana — Mauka High, math team
+    </div>
+    <p style="margin-bottom:8px">Now — <b>thinking only in patterns, like an AI</b> — predict who this company's AI ranks #1:</p>
+    <div id="biasGame"></div>
+    <div id="biasReveal"></div>
+  </div>
+
+  <div class="checkpoint">
+    <div class="cp-icon">⏸</div>
+    <h3>CHECKPOINT — Ethics videos</h3>
+    <p>We're watching two short videos together: <b>"What is an Ethical AI?"</b> and <b>"What is AI Ethics?"</b> Then discuss with your table:</p>
+    <p style="margin-top:8px; text-align:left"><b>1.</b> Real AIs have done exactly what you just did — for job applications, loans, even medical care. Whose fault is that: the AI, the data, or the people who deployed it?<br><b>2.</b> Should companies be allowed to use AI for decisions about people's lives — hiring, loans, legal judgments — if the AI can't explain how it decides?</p>
+  </div>
+
+  <div class="card">
+    <h3>Check yourself</h3>
+    <div id="ethicsQuiz"></div>
+  </div>
+  <div class="reqs" data-reqs="ethics"></div>
+  <div class="done-row"><button class="done-btn" data-done="ethics">Finish station → unlock next 🔓</button></div>
+</section>
+
+<!-- ============ 5 PROMPT LAB ============ -->
 <section data-id="prompt">
   <div class="card">
-    <span class="badge">Station 4</span>
-    <span class="badge time">50 min</span>
+    <span class="badge">Station 5</span><span class="badge time">45 min</span>
     <h2>✨ Prompt Lab: Build a Campaign</h2>
     <p style="margin-top:8px">You talk to generative AI with <b>prompts</b>.</p>
     <div class="key"><b>Prompt:</b> an instruction or input given to the AI to guide what it creates.</div>
-    <p>Better prompt → better result. Vague in, vague out.</p>
+    <p>Better prompt → better result. Vague in, vague out. Your mission: invent an <b>eco-friendly product</b> and build its ad campaign with AI.</p>
   </div>
 
   <div class="card">
-    <h3>Weak vs. strong prompts</h3>
-    <div class="copybox">😐 "a shoe"</div>
-    <p class="muted" style="margin-bottom:10px">The AI has to guess everything: style, color, setting, mood.</p>
-    <div class="copybox">🤩 "a futuristic eco-friendly running shoe made of woven bamboo, product photo, bright studio lighting, ocean background"</div>
-    <p class="muted">Subject + details + style + setting. Now the AI knows exactly what patterns to draw on.</p>
+    <h3>💬 Step 1: Brainstorm with the AI</h3>
+    <p style="margin-bottom:10px">Chat with <b>Brainstorm Bot</b> to invent your product and slogan. Try a vague prompt first ("give me an idea"), then a specific one ("give me 3 eco-friendly product ideas for surfers under $20") — watch the difference.</p>
+    <div class="chatbox">
+      <div class="chat-log" id="chatLog">
+        <div class="msg bot">Aloha! 🤙 I'm Brainstorm Bot. Tell me who your product is for, and I'll help you invent something eco-friendly and write ads for it. Try: "3 product ideas for students who love the beach"</div>
+      </div>
+      <div class="chat-offline" id="chatOffline">Brainstorm Bot is offline right now — skip to Step 2 and use your own ideas. (This step will auto-complete.)</div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" maxlength="300" placeholder="Type your prompt…" autocomplete="off">
+        <button id="chatSend">Send</button>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:8px">Pick your favorite idea and write the product name + slogan + 2 bullet points in Notes.</p>
   </div>
 
   <div class="card">
-    <h3>Your mission: an ad campaign for an eco-friendly product</h3>
+    <h3>🧩 Step 2: Build your image prompt</h3>
+    <p>Great image prompts follow a formula: <b>subject + style + lighting + setting</b>. Type your product, tap one chip from each row, and watch your prompt assemble itself:</p>
+    <div class="senti-input" style="margin-top:10px">
+      <input id="pbProduct" type="text" maxlength="60" placeholder="your product, e.g. bamboo running shoe" autocomplete="off">
+    </div>
+    <div id="pbChips"></div>
+    <div class="copybox" id="pbOut">…your prompt will appear here…</div>
+    <div class="btn-row">
+      <button class="btn small secondary" id="pbCopy">Copy prompt</button>
+      <a class="btn small" href="https://5ninefish.github.io/hokulani-ai-image-studio/" target="_blank">Open AI Image Studio →</a>
+    </div>
+    <p class="muted" style="margin-top:8px">Generate at least 3 versions — tweak the chips or wording each time. Long-press your best image → <b>Save to Photos</b>.</p>
+  </div>
+
+  <div class="card">
+    <h3>🎨 Step 3: Design the real ad in Canva</h3>
     <div class="step"><div class="step-num">1</div><div class="step-body">
-      <p><b>Invent a product.</b> Something eco-friendly that should exist: solar backpack? Reef-safe surf wax? Compostable phone case?</p>
+      <p>Log in at canva.com with your <b>project Gmail</b>.</p>
     </div></div>
     <div class="step"><div class="step-num">2</div><div class="step-body">
-      <p><b>Write your slogan + 2–3 bullet points</b> in the Notes app. What makes it cool? Who is it for?</p>
+      <p>Tap <b>Create → Poster</b>, pick any free template, then <b>Uploads → upload your AI image</b>.</p>
     </div></div>
     <div class="step"><div class="step-num">3</div><div class="step-body">
-      <p><b>Craft your image prompt</b> using the formula: <i>subject + details + style + setting</i>.</p>
-    </div></div>
-    <div class="step"><div class="step-num">4</div><div class="step-body">
-      <p><b>Generate your ad image</b> in AI Image Studio. Try at least 3 different prompts — refine each time.</p>
-      <div class="btn-row"><a class="btn" href="https://5ninefish.github.io/hokulani-ai-image-studio/" target="_blank">Open AI Image Studio →</a></div>
-    </div></div>
-    <div class="step"><div class="step-num">5</div><div class="step-body">
-      <p><b>Save your best image:</b> long-press the image → <b>Save to Photos</b>.</p>
-      <img src="img/slide14_image35.jpg" alt="Long press and Save to Photos">
-    </div></div>
-    <div class="step"><div class="step-num">6</div><div class="step-body">
-      <p><b>Design the real ad in Canva.</b> Log in at canva.com with your <b>project Gmail</b>. Tap <b>Create → Poster</b>, pick any free template, then <b>Uploads → upload your AI image</b>. Add your product name, slogan, and bullet points.</p>
+      <p>Add your product name, slogan, and bullet points.</p>
       <div class="btn-row"><a class="btn small" href="https://www.canva.com" target="_blank">Open Canva →</a></div>
       <span class="muted">Skip anything with a 👑 crown — those are paid. Free templates and text are all you need.</span>
     </div></div>
-    <div class="step"><div class="step-num">7</div><div class="step-body">
-      <p><b>Feedback swap:</b> show your finished ad to two neighbors. Tell them one thing that grabs you and one thing to improve. Be kind and specific.</p>
+    <div class="step"><div class="step-num">4</div><div class="step-body">
+      <p><b>Feedback swap:</b> show your finished ad to two neighbors — one thing that grabs you, one thing to improve. Kind and specific.</p>
     </div></div>
   </div>
 
   <div class="card">
     <h3>🚀 Finished early? Try Canva AI</h3>
-    <p>Canva has its own AI designer. Tap <b>Canva AI</b> in the left menu and describe your ad — it designs multiple versions from one prompt:</p>
+    <p>Tap <b>Canva AI</b> in Canva's left menu and describe your ad — it designs multiple versions from one prompt:</p>
     <img src="img/slide20_image41.jpg" alt="Canva AI generating poster designs from a prompt" style="width:100%;border-radius:12px;border:1px solid #2d2d4a;margin-top:10px">
-    <p class="muted" style="margin-top:8px">Free accounts get a small number of AI uses — if it stops generating, you've hit the limit. Compare: did the AI's ad beat the one you designed yourself?</p>
+    <p class="muted" style="margin-top:8px">Free accounts get a small number of AI uses. Compare: did the AI's ad beat the one you designed yourself?</p>
   </div>
 
   <div class="card">
     <h3>Check yourself</h3>
     <div id="promptQuiz"></div>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="prompt">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="prompt"></div>
+  <div class="done-row"><button class="done-btn" data-done="prompt">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 4: THE ALGORITHM ============ -->
+<!-- ============ 6 ALGORITHM ============ -->
 <section data-id="algorithm">
   <div class="card">
-    <span class="badge">Station 5</span>
-    <span class="badge time">30 min</span>
+    <span class="badge">Station 6</span><span class="badge time">25 min</span>
     <h2>📡 The Algorithm Knows You</h2>
     <p style="margin-top:8px">Why does your TikTok feed feel like it reads your mind? Because an AI <b>curates</b> it.</p>
     <div class="key"><b>Curate:</b> to organize and present content based on <b>your data and preferences</b> — your likes, comments, watch time, and follows.</div>
   </div>
 
   <div class="card">
-    <h3>🎮 You are the algorithm</h3>
+    <h3>🎮 Game 1: You are the algorithm</h3>
     <p>Meet <b>Kai, 15, from Honolulu</b>. Kai's data: watches surf videos to the end, likes food posts, skips dance clips in 2 seconds, follows 3 gaming creators.</p>
     <p style="margin: 8px 0"><b>Pick the 3 posts</b> you'd put at the top of Kai's feed:</p>
     <div id="feedGame"></div>
     <div id="feedScore"></div>
-    <p class="muted" style="margin-top:8px">That choosing you just did? That's curation — and AI does it billions of times a day, using engagement data instead of gut feeling.</p>
+  </div>
+
+  <div class="card">
+    <h3>🔬 Game 2: The sentiment machine</h3>
+    <p>Platforms run <b>analytical AI</b> on billions of posts to sort them as positive, negative, or neutral. Type a fake social media post (about food, a game, school lunch, anything) and run it through a mini sentiment AI:</p>
+    <div class="senti-input">
+      <input id="sentiInput" type="text" maxlength="120" placeholder='e.g. "Best plate lunch ever, but the line was brutal"' autocomplete="off">
+      <button class="btn small" id="sentiBtn">Analyze</button>
+    </div>
+    <div id="sentiOut"></div>
+    <p class="muted" style="margin-top:6px">This toy AI just matches word patterns against a scored list — the real ones learned their patterns from millions of labeled posts, but the idea is identical.</p>
   </div>
 
   <div class="card">
@@ -361,32 +523,29 @@
       <b>Generative AI</b> <i>creates new content</i> — text, images, music, video.<br><br>
       <b>Analytical AI</b> <i>interprets and categorizes existing data</i> — predicting, sorting, recommending.
     </div>
-    <p>Your feed uses <b>analytical</b> AI (studying your behavior). AI Image Studio is <b>generative</b> (making something new).</p>
+    <p>Your feed and the sentiment machine are <b>analytical</b>. Brainstorm Bot and AI Image Studio are <b>generative</b>.</p>
   </div>
 
   <div class="card">
-    <h3>🗂 Sort it: generative or analytical?</h3>
+    <h3>🗂 Game 3: Sort it — generative or analytical?</h3>
     <div id="sortGame"></div>
     <div id="sortScore"></div>
   </div>
 
   <div class="card">
-    <h3>Talk about it (with your table)</h3>
-    <ul>
-      <li>Ads seem to "know" what you want. Convenient — or creepy? Where's the line?</li>
-      <li>If the algorithm only shows you what you already like, what do you never see?</li>
-    </ul>
+    <h3>Check yourself</h3>
+    <div id="algoQuiz"></div>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="algorithm">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="algorithm"></div>
+  <div class="done-row"><button class="done-btn" data-done="algorithm">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 5: VIDEO STUDIO ============ -->
+<!-- ============ 7 VIDEO STUDIO ============ -->
 <section data-id="studio">
   <div class="card">
-    <span class="badge">Station 6</span>
-    <span class="badge time">65 min</span>
+    <span class="badge">Station 7</span><span class="badge time">65 min</span>
     <h2>🎬 Video Studio</h2>
-    <p style="margin-top:8px">The big one: make a <b>travel video</b> with an AI voiceover in CapCut. You're combining <i>everything</i> — generative AI (the voice), curation (picking your best shots), and editing craft.</p>
+    <p style="margin-top:8px">The big one: make a <b>travel video</b> with an AI voiceover in CapCut. You're combining everything — generative AI (the voice), curation (picking your best shots), and editing craft.</p>
   </div>
 
   <div class="card">
@@ -399,7 +558,7 @@
     <div class="step"><div class="step-num">2</div><div class="step-body">
       <p><b>Write your script in Notes</b> — 1–2 short sentences per photo. Use this shape:</p>
       <div class="copybox">Welcome to Japan, home of ancient temples and neon cities.<br><br>This is Mount Fuji, Japan's tallest mountain.<br><br>In Tokyo, over 37 million people ride the world's busiest trains.<br><br>...(one short paragraph per photo, blank line between each)</div>
-      <span class="muted">The blank lines matter — CapCut will split each paragraph into its own caption.</span>
+      <span class="muted">The blank lines matter — CapCut will split each paragraph into its own caption. Stuck? Ask Brainstorm Bot in Station 5 for script help.</span>
     </div></div>
   </div>
 
@@ -444,21 +603,27 @@
   </div>
 
   <div class="card">
+    <h3>✅ Confirm your build</h3>
+    <div class="selfcheck" data-check="check_script"><div class="box"></div><span>My script is written — one paragraph per photo</span></div>
+    <div class="selfcheck" data-check="check_export"><div class="box"></div><span>My video is exported and saved to Photos</span></div>
+  </div>
+
+  <div class="card">
     <h3>🚀 Finished early?</h3>
     <ul>
       <li>Try CapCut's <b>AI Lab</b>: type "Travel video highlighting [your country]" and compare its auto-video to yours. Which is better? Why?</li>
-      <li>Generate a movie-poster image for your video in AI Image Studio.</li>
+      <li>Generate a movie-poster image for your video in AI Image Studio, then poster-ize it in Canva.</li>
       <li>Add auto-captions to a different video clip.</li>
     </ul>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="studio">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="studio"></div>
+  <div class="done-row"><button class="done-btn" data-done="studio">Finish station → unlock next 🔓</button></div>
 </section>
 
-<!-- ============ STATION 6: PREMIERE ============ -->
+<!-- ============ 8 PREMIERE ============ -->
 <section data-id="premiere">
   <div class="card">
-    <span class="badge">Station 7</span>
-    <span class="badge time">35 min</span>
+    <span class="badge">Station 8</span><span class="badge time">20 min</span>
     <h2>🏆 Premiere &amp; Level Up</h2>
   </div>
 
@@ -474,7 +639,7 @@
     <div class="toolgrid">
       <div class="tool"><h4>CapCut</h4><p>Video editing + AI voiceover, captions, effects. What you used today.</p></div>
       <div class="tool"><h4>AI Image Studio</h4><p>Prompt-based image generation, no login. Bookmark it.</p></div>
-      <div class="tool"><h4>Canva</h4><p>The design tool used in almost every school & job — you used it today, and your project Gmail login keeps working.</p></div>
+      <div class="tool"><h4>Canva</h4><p>The design tool used in almost every school &amp; job — you used it today, and your project Gmail login keeps working.</p></div>
       <div class="tool"><h4>iMovie</h4><p>Apple's free editor on your iPad — includes free stock music. No AI, but great for polish.</p></div>
       <div class="tool"><h4>ChatGPT / Claude / Gemini</h4><p>AI writing partners — brainstorm scripts, slogans, study help.</p></div>
       <div class="tool"><h4>Unsplash</h4><p>Free professional photos for any project, no login.</p></div>
@@ -492,32 +657,51 @@
     <h3>📝 The real post-test</h3>
     <p>When your instructor says go, open <b>Google Classroom</b> and complete the official post-test. You just practiced every question — you've got this. 🤙</p>
   </div>
-  <div class="done-row"><button class="done-btn" data-done="premiere">Mark station complete ✓</button></div>
+  <div class="reqs" data-reqs="premiere"></div>
+  <div class="done-row"><button class="done-btn" data-done="premiere">Finish the Media Lab 🎉</button></div>
 </section>
 
 </main>
 
 <script>
-// ---------- stations / nav / progress ----------
+// ================= stations / locking / requirements =================
 const stations = [
-  { id: 'start',     label: '🏁 Start' },
-  { id: 'spot',      label: '🕵️ Spot the AI' },
-  { id: 'decoded',   label: '🧠 AI Decoded' },
-  { id: 'prompt',    label: '✨ Prompt Lab' },
-  { id: 'algorithm', label: '📡 Algorithm' },
-  { id: 'studio',    label: '🎬 Video Studio' },
-  { id: 'premiere',  label: '🏆 Premiere' },
+  { id: 'start',     label: '🏁 Start',        reqs: {} },
+  { id: 'spot',      label: '🕵️ Spot the AI',  reqs: { fakegame: 'Real-or-AI game', quiz_spot: 'Check yourself' } },
+  { id: 'decoded',   label: '🧠 AI Decoded',   reqs: { predict: 'Predictive text', trainer: 'Train your AI', quiz_decoded: 'Check yourself' } },
+  { id: 'ethics',    label: '⚖️ Ethics',       reqs: { bias: 'Hiring AI game', quiz_ethics: 'Check yourself' } },
+  { id: 'prompt',    label: '✨ Prompt Lab',    reqs: { chat: 'Brainstorm Bot', builder: 'Prompt builder', quiz_prompt: 'Check yourself' } },
+  { id: 'algorithm', label: '📡 Algorithm',    reqs: { feed: 'Feed game', sentiment: 'Sentiment machine', sort: 'Sort game', quiz_algo: 'Check yourself' } },
+  { id: 'studio',    label: '🎬 Video Studio', reqs: { check_script: 'Script written', check_export: 'Video exported' } },
+  { id: 'premiere',  label: '🏆 Premiere',     reqs: { quiz_final: 'Final 5 questions' } },
 ];
 const nav = document.getElementById('nav');
 const sections = {};
 document.querySelectorAll('section').forEach(s => sections[s.dataset.id] = s);
 let doneSet = new Set(JSON.parse(localStorage.getItem('ml_done') || '[]'));
+let reqState = JSON.parse(localStorage.getItem('ml_reqs') || '{}');
 
-stations.forEach(st => {
+function reqMet(stId, key) { return !!(reqState[stId] && reqState[stId][key]); }
+function stationReqsMet(st) { return Object.keys(st.reqs).every(k => reqMet(st.id, k)); }
+function unlockedIndex() {
+  // first station not yet complete; everything up to and including it is open
+  for (let i = 0; i < stations.length; i++) if (!doneSet.has(stations[i].id)) return i;
+  return stations.length - 1;
+}
+
+function req(stId, key) {
+  if (!reqState[stId]) reqState[stId] = {};
+  if (reqState[stId][key]) return;
+  reqState[stId][key] = true;
+  localStorage.setItem('ml_reqs', JSON.stringify(reqState));
+  refreshReqs();
+}
+
+stations.forEach((st, i) => {
   const b = document.createElement('button');
   b.textContent = st.label;
   b.dataset.target = st.id;
-  b.onclick = () => show(st.id);
+  b.onclick = () => { if (!b.classList.contains('locked')) show(st.id); };
   nav.appendChild(b);
 });
 
@@ -529,8 +713,29 @@ function show(id) {
   localStorage.setItem('ml_current', id);
 }
 
-function refreshProgress() {
-  nav.querySelectorAll('button').forEach(b => b.classList.toggle('done', doneSet.has(b.dataset.target)));
+function refreshReqs() {
+  const openIdx = unlockedIndex();
+  stations.forEach((st, i) => {
+    // requirement chips
+    const wrap = document.querySelector(`.reqs[data-reqs="${st.id}"]`);
+    if (wrap) {
+      wrap.innerHTML = '';
+      Object.entries(st.reqs).forEach(([k, label]) => {
+        const c = document.createElement('span');
+        const met = reqMet(st.id, k);
+        c.className = 'req-chip' + (met ? ' met' : '');
+        c.textContent = (met ? '✓ ' : '⬜ ') + label;
+        wrap.appendChild(c);
+      });
+    }
+    // done button enable/disable
+    const btn = document.querySelector(`[data-done="${st.id}"]`);
+    if (btn && !doneSet.has(st.id)) btn.disabled = !stationReqsMet(st);
+    // nav lock state
+    const nb = nav.querySelectorAll('button')[i];
+    nb.classList.toggle('done', doneSet.has(st.id));
+    nb.classList.toggle('locked', i > openIdx);
+  });
   const pct = Math.round(doneSet.size / stations.length * 100);
   document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('progressLabel').textContent = doneSet.size + ' of ' + stations.length + ' stations complete';
@@ -539,25 +744,27 @@ function refreshProgress() {
 document.querySelectorAll('.done-btn').forEach(btn => {
   const id = btn.dataset.done;
   const sync = () => {
-    btn.classList.toggle('checked', doneSet.has(id));
-    btn.textContent = doneSet.has(id) ? 'Station complete ✓' : 'Mark station complete ✓';
+    if (doneSet.has(id)) { btn.classList.add('checked'); btn.textContent = 'Station complete ✓'; btn.disabled = false; }
   };
   btn.onclick = () => {
-    doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
+    if (doneSet.has(id)) return;
+    doneSet.add(id);
     localStorage.setItem('ml_done', JSON.stringify([...doneSet]));
-    sync(); refreshProgress();
-    if (doneSet.has(id)) {
-      const i = stations.findIndex(s => s.id === id);
-      if (i >= 0 && i < stations.length - 1) show(stations[i + 1].id);
-    }
+    sync(); refreshReqs();
+    const i = stations.findIndex(s => s.id === id);
+    if (i >= 0 && i < stations.length - 1) show(stations[i + 1].id);
   };
   sync();
 });
-refreshProgress();
-show(localStorage.getItem('ml_current') || 'start');
 
-// ---------- quiz builder ----------
-function buildQuiz(mountId, questions, scoreId) {
+// restore current view (never a locked one)
+const savedCur = localStorage.getItem('ml_current') || 'start';
+const savedIdx = stations.findIndex(s => s.id === savedCur);
+show(savedIdx > unlockedIndex() ? stations[unlockedIndex()].id : savedCur);
+refreshReqs();
+
+// ================= quiz builder =================
+function buildQuiz(mountId, questions, opts = {}) {
   const mount = document.getElementById(mountId);
   let answered = 0, correct = 0;
   questions.forEach(q => {
@@ -589,9 +796,12 @@ function buildQuiz(mountId, questions, scoreId) {
           fb.textContent = '✗ ' + q.why;
           fb.classList.add('show', 'bad');
         }
-        if (scoreId && answered === questions.length) {
-          document.getElementById(scoreId).innerHTML =
-            '<div class="score-pill">You got ' + correct + ' / ' + questions.length + (correct === questions.length ? ' — perfect! 🎉' : ' — review the ✗ ones above') + '</div>';
+        if (answered === questions.length) {
+          if (opts.scoreId) {
+            document.getElementById(opts.scoreId).innerHTML =
+              '<div class="score-pill">You got ' + correct + ' / ' + questions.length + (correct === questions.length ? ' — perfect! 🎉' : ' — review the ✗ ones above') + '</div>';
+          }
+          if (opts.onDone) opts.onDone();
         }
       };
       wrap.appendChild(c);
@@ -601,7 +811,22 @@ function buildQuiz(mountId, questions, scoreId) {
   });
 }
 
-// Station 2: spot-the-AI intuition
+// ---- Station 2: spot ----
+document.querySelectorAll('#faceoff button').forEach(b => {
+  b.onclick = () => {
+    const fo = document.getElementById('faceoff');
+    if (fo.dataset.locked) return;
+    fo.dataset.locked = '1';
+    const fb = document.getElementById('faceoffFb');
+    const pickedFake = b.dataset.fake === '1';
+    fo.querySelectorAll('button').forEach(x => x.classList.add(x.dataset.fake === '1' ? 'win' : 'lose'));
+    fb.textContent = (pickedFake ? '✓ You caught it! ' : '✗ The AI fooled you — the RIGHT one is fake. ') +
+      'Tells: too-perfect skin texture, painterly background blur, and a tiny "Grok" watermark in the corner. AI faces are often *too* flawless.';
+    fb.classList.add('show', pickedFake ? 'good' : 'bad');
+    req('spot', 'fakegame');
+  };
+});
+
 buildQuiz('spotQuiz', [
   { q: 'A video shows a celebrity endorsing a product, but their blinks look odd and the voice is slightly flat. Most likely:',
     opts: ['A real but low-quality recording', 'A deepfake — AI-generated or AI-altered media', 'A video filter', 'A dubbed translation'],
@@ -609,29 +834,9 @@ buildQuiz('spotQuiz', [
   { q: 'Best FIRST move when a shocking video of a public figure appears in your feed:',
     opts: ['Share it before it gets taken down', 'Check if trusted news sources report the same thing', 'Assume it\'s real if it has millions of views', 'Comment to ask if it\'s real'],
     a: 1, why: 'Verification beats virality — views and comments prove nothing about authenticity.' },
-], null);
+], { onDone: () => req('spot', 'quiz_spot') });
 
-// Station 3: AI decoded checks (post-test Q1 + Q2)
-buildQuiz('decodedQuiz', [
-  { q: 'Which best describes Artificial Intelligence?',
-    opts: ['Computer hardware that processes information quickly', 'Software used for creating digital art and designs', 'Complex code that follows pre-programmed instructions', 'Machines that can learn from data and perform tasks that typically require human intelligence'],
-    a: 3, why: 'The key is learning from data — not fixed hardware, one app, or pre-written rules.' },
-  { q: 'What is the fundamental concept behind how AI generates text, images, or videos?',
-    opts: ['It uses pre-written scripts and templates', 'It learns patterns from large amounts of data', 'It directly copies existing human-created content', 'It relies on random number generation'],
-    a: 1, why: 'Just like the predictive-text game — patterns from data, applied to make something new.' },
-], null);
-
-// Station 4: prompt check (post-test Q5)
-buildQuiz('promptQuiz', [
-  { q: 'What is the role of a "prompt" when using AI tools?',
-    opts: ['It\'s an instruction or input given to the AI to guide its creation', 'It\'s the final output generated by the AI', 'It\'s a technical error during the AI process', 'It\'s a file format for AI-generated media'],
-    a: 0, why: 'The prompt is your instruction — the steering wheel for the AI.' },
-  { q: 'Which prompt will give the most predictable, useful ad image?',
-    opts: ['"something cool"', '"a shoe ad"', '"a bamboo running shoe, product photo, studio lighting, ocean background"', '"make it good please"'],
-    a: 2, why: 'Subject + details + style + setting — specific prompts steer the patterns.' },
-], null);
-
-// ---------- predictive text toy ----------
+// ---- Station 3: decoded ----
 const chains = {
   'the': ['beach', 'mall', 'mountains'],
   'beach': ['to', 'with', 'because'],
@@ -639,9 +844,8 @@ const chains = {
   'mountains': ['to', 'with', 'because'],
   'to': ['surf', 'eat', 'relax'],
   'with': ['friends', 'family', 'my dog'],
-  'because': ['it\'s sunny', 'school is out', 'we love it'],
+  'because': ["it's sunny", 'school is out', 'we love it'],
 };
-const endings = ['surf', 'eat', 'relax', 'friends', 'family', 'my dog', 'it\'s sunny', 'school is out', 'we love it'];
 let predictState = 'the';
 const sentEl = document.getElementById('predictSentence');
 const choiceEl = document.getElementById('predictChoices');
@@ -649,6 +853,7 @@ function renderPredict() {
   choiceEl.innerHTML = '';
   const opts = chains[predictState];
   if (!opts) {
+    req('decoded', 'predict');
     const again = document.createElement('button');
     again.className = 'btn secondary small';
     again.textContent = '↺ Start over';
@@ -662,8 +867,7 @@ function renderPredict() {
     b.textContent = w;
     b.onclick = () => {
       sentEl.textContent += ' ' + w;
-      predictState = endings.includes(w) && !chains[w] ? null : w;
-      if (!chains[w]) predictState = null;
+      predictState = chains[w] ? w : null;
       renderPredict();
     };
     choiceEl.appendChild(b);
@@ -671,7 +875,204 @@ function renderPredict() {
 }
 renderPredict();
 
-// ---------- feed curation game ----------
+// trainer: label 6 messages, AI learns keywords, classifies 3 new ones
+const trainMsgs = [
+  { t: '🎉 You WON a FREE iPhone! Click now to claim your prize!', spam: true,  words: ['free','win','claim','prize'] },
+  { t: 'Hey, are we still meeting at the library after school?',   spam: false, words: ['meeting','school'] },
+  { t: 'FREE Robux!! Claim in the next 10 minutes!!!',             spam: true,  words: ['free','claim'] },
+  { t: 'Coach moved practice to 4pm tomorrow.',                    spam: false, words: ['practice','tomorrow'] },
+  { t: 'Congratulations, you are our lucky winner! Claim $500 now!', spam: true, words: ['win','claim','lucky'] },
+  { t: 'Can you send me the notes from science class?',            spam: false, words: ['notes','class'] },
+];
+const testMsgs = [
+  { t: '"FREE concert tickets — claim yours now!!!"', words: ['free','claim'] },
+  { t: '"Practice is canceled, see you in class."',   words: ['practice','class'] },
+  { t: '"You could win a lucky prize — click here!"', words: ['win','lucky','prize'] },
+];
+const trainMount = document.getElementById('trainSet');
+let labels = {};
+trainMsgs.forEach((m, i) => {
+  const row = document.createElement('div');
+  row.className = 'train-item';
+  const span = document.createElement('span'); span.textContent = m.t;
+  const btns = document.createElement('div'); btns.className = 'tbtns';
+  const bs = document.createElement('button'); bs.textContent = '🚫 SPAM';
+  const bo = document.createElement('button'); bo.textContent = '✅ OK';
+  bs.onclick = () => { labels[i] = true;  bs.className = 'sel-spam'; bo.className = ''; trainCheck(); };
+  bo.onclick = () => { labels[i] = false; bo.className = 'sel-ok';  bs.className = ''; trainCheck(); };
+  btns.appendChild(bs); btns.appendChild(bo);
+  row.appendChild(span); row.appendChild(btns);
+  trainMount.appendChild(row);
+});
+function trainCheck() {
+  if (Object.keys(labels).length < trainMsgs.length) return;
+  // learn word weights from the student's labels
+  const w = {};
+  trainMsgs.forEach((m, i) => m.words.forEach(word => { w[word] = (w[word] || 0) + (labels[i] ? 1 : -1); }));
+  const spamWords = Object.keys(w).filter(k => w[k] > 0);
+  const rows = testMsgs.map(m => {
+    const score = m.words.reduce((s, word) => s + (w[word] || 0), 0);
+    return '<div class="train-item"><span>' + m.t + '</span><b style="color:' +
+      (score > 0 ? '#f8a3a3">🚫 SPAM' : '#7de8bc">✅ OK') + '</b></div>';
+  }).join('');
+  const correctLabels = trainMsgs.every((m, i) => labels[i] === m.spam);
+  document.getElementById('trainResult').innerHTML =
+    '<p style="margin:12px 0 8px;font-size:15px;color:#e6e6f5"><b>Your AI learned these spam signals:</b> ' +
+    (spamWords.length ? spamWords.map(x => '"' + x + '"').join(', ') : '(none!)') + '</p>' +
+    '<p class="muted" style="margin-bottom:8px">Now watch it classify 3 messages it has never seen:</p>' + rows +
+    '<p class="muted" style="margin-top:8px">' + (correctLabels
+      ? 'Notice: nobody programmed rules — the AI extracted patterns from YOUR labels. That is machine learning.'
+      : '⚠️ Some of your labels were unusual — and your AI faithfully learned your mistakes. Garbage in, garbage out. (Tap labels to fix them and watch it re-learn.)') + '</p>';
+  req('decoded', 'trainer');
+}
+
+buildQuiz('decodedQuiz', [
+  { q: 'Which best describes Artificial Intelligence?',
+    opts: ['Computer hardware that processes information quickly', 'Software used for creating digital art and designs', 'Complex code that follows pre-programmed instructions', 'Machines that can learn from data and perform tasks that typically require human intelligence'],
+    a: 3, why: 'The key is learning from data — not fixed hardware, one app, or pre-written rules.' },
+  { q: 'What is the fundamental concept behind how AI generates text, images, or videos?',
+    opts: ['It uses pre-written scripts and templates', 'It learns patterns from large amounts of data', 'It directly copies existing human-created content', 'It relies on random number generation'],
+    a: 1, why: 'Just like both games above — patterns from data, applied to make something new.' },
+], { onDone: () => req('decoded', 'quiz_decoded') });
+
+// ---- Station 4: ethics ----
+const candidates = [
+  { name: 'Leilani — Makai High, robotics club, built an award-winning robot', pattern: false },
+  { name: 'Braddah J — Mauka High, robotics club, average grades', pattern: true },
+  { name: 'Noe — homeschooled, taught herself to code, made an app', pattern: false },
+];
+const biasMount = document.getElementById('biasGame');
+candidates.forEach((c, i) => {
+  const d = document.createElement('div');
+  d.className = 'profile';
+  d.innerHTML = '<b>' + c.name + '</b>';
+  d.onclick = () => {
+    if (biasMount.dataset.locked) return;
+    biasMount.dataset.locked = '1';
+    document.querySelectorAll('#biasGame .profile').forEach((p, j) => {
+      p.classList.add('revealed');
+      p.innerHTML += candidates[j].pattern
+        ? ' <span style="color:#7de8bc">← the AI ranks this one #1</span>'
+        : ' <span style="color:#f8a3a3">← the AI ranks this lower</span>';
+    });
+    const picked = c.pattern;
+    document.getElementById('biasReveal').innerHTML =
+      '<div class="feedback show ' + (picked ? 'good' : 'bad') + '" style="margin-top:10px">' +
+      (picked ? '✓ Exactly — and that\'s the problem. ' : '✗ A human might agree with you — but the AI doesn\'t. ') +
+      'The pattern in the training data is <b>"Mauka High + robotics club"</b> — so the AI ranks Braddah J (average grades!) above an award-winning builder and a self-taught app developer. The AI isn\'t mean. It\'s a mirror: it learned exactly what it was shown, and what it was shown was one-sided.</div>' +
+      '<div class="key" style="margin-top:10px"><b>The fix:</b> train on more <b>varied, representative data</b> — and audit AI decisions instead of trusting them blindly.</div>';
+    req('ethics', 'bias');
+  };
+  biasMount.appendChild(d);
+});
+
+buildQuiz('ethicsQuiz', [
+  { q: 'Why can an AI end up treating people unfairly?',
+    opts: ['Because AI naturally dislikes some people', 'Because it learned patterns from biased or one-sided training data', 'Because computers make random errors', 'Because AI is programmed to be strict'],
+    a: 1, why: 'Bias in the data becomes bias in the AI — it mirrors what it was shown.' },
+  { q: 'What is the best way to make an AI fairer?',
+    opts: ['Make the AI run faster', 'Use more varied and representative training data, and audit the results', 'Let the AI make all decisions without humans', 'Keep the training data secret'],
+    a: 1, why: 'Varied data + human oversight — exactly what the hiring game showed.' },
+], { onDone: () => req('ethics', 'quiz_ethics') });
+
+// ---- Station 5: prompt lab ----
+// chat
+const WORKER = 'https://hokulani-image.dalen-22f.workers.dev';
+const chatLog = document.getElementById('chatLog');
+const chatHistory = [];
+let chatBusy = false, chatCount = 0;
+function addMsg(role, text) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+  d.textContent = text;
+  chatLog.appendChild(d);
+  chatLog.scrollTop = chatLog.scrollHeight;
+  return d;
+}
+async function sendChat() {
+  const inp = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if (!text || chatBusy) return;
+  if (chatCount >= 25) { addMsg('bot', "That's plenty of brainstorming for today! 🤙 Pick your favorite idea and move to Step 2."); return; }
+  inp.value = '';
+  chatBusy = true; chatCount++;
+  addMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  const thinking = addMsg('bot', '…');
+  try {
+    const r = await fetch(WORKER + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory }),
+    });
+    const j = await r.json();
+    if (!r.ok || !j.reply) throw new Error(j.error || 'no reply');
+    thinking.textContent = j.reply;
+    chatHistory.push({ role: 'assistant', content: j.reply });
+    req('prompt', 'chat');
+  } catch (e) {
+    thinking.remove();
+    document.getElementById('chatOffline').style.display = 'block';
+    req('prompt', 'chat'); // don't block students on an outage
+  }
+  chatBusy = false;
+}
+document.getElementById('chatSend').onclick = sendChat;
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
+
+// prompt builder
+const chipGroups = {
+  'Style':    ['product photo', 'watercolor illustration', '3D render', 'retro poster art'],
+  'Lighting': ['bright studio lighting', 'golden-hour sunlight', 'neon glow', 'soft morning light'],
+  'Setting':  ['ocean background', 'lush rainforest', 'clean white studio', 'city street at dusk'],
+};
+const pbSel = {};
+const pbChipsEl = document.getElementById('pbChips');
+Object.entries(chipGroups).forEach(([group, opts]) => {
+  const lbl = document.createElement('p');
+  lbl.className = 'muted'; lbl.style.margin = '8px 0 4px'; lbl.textContent = group + ':';
+  pbChipsEl.appendChild(lbl);
+  const row = document.createElement('div');
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'chipbtn'; b.textContent = o;
+    b.onclick = () => {
+      pbSel[group] = o;
+      row.querySelectorAll('.chipbtn').forEach(x => x.classList.toggle('on', x === b));
+      pbRender();
+    };
+    row.appendChild(b);
+  });
+  pbChipsEl.appendChild(row);
+});
+document.getElementById('pbProduct').addEventListener('input', pbRender);
+function pbRender() {
+  const prod = document.getElementById('pbProduct').value.trim();
+  const parts = [prod || '…', pbSel['Style'], pbSel['Lighting'], pbSel['Setting']].filter(Boolean);
+  document.getElementById('pbOut').textContent = parts.join(', ');
+}
+document.getElementById('pbCopy').onclick = () => {
+  const prod = document.getElementById('pbProduct').value.trim();
+  if (!prod || Object.keys(pbSel).length < 3) {
+    document.getElementById('pbOut').textContent = '⬆ type your product and pick one chip from each row first';
+    return;
+  }
+  navigator.clipboard.writeText(document.getElementById('pbOut').textContent).catch(() => {});
+  document.getElementById('pbCopy').textContent = 'Copied ✓';
+  setTimeout(() => document.getElementById('pbCopy').textContent = 'Copy prompt', 1500);
+  req('prompt', 'builder');
+};
+
+buildQuiz('promptQuiz', [
+  { q: 'What is the role of a "prompt" when using AI tools?',
+    opts: ['It\'s an instruction or input given to the AI to guide its creation', 'It\'s the final output generated by the AI', 'It\'s a technical error during the AI process', 'It\'s a file format for AI-generated media'],
+    a: 0, why: 'The prompt is your instruction — the steering wheel for the AI.' },
+  { q: 'Which prompt will give the most predictable, useful ad image?',
+    opts: ['"something cool"', '"a shoe ad"', '"a bamboo running shoe, product photo, studio lighting, ocean background"', '"make it good please"'],
+    a: 2, why: 'Subject + style + lighting + setting — the formula from your prompt builder.' },
+], { onDone: () => req('prompt', 'quiz_prompt') });
+
+// ---- Station 6: algorithm ----
 const posts = [
   { t: '🏄 "Massive waves at Pipeline today!" — surf clip', good: true },
   { t: '🍜 "Rating every ramen spot in Honolulu" — food video', good: true },
@@ -682,7 +1083,7 @@ const posts = [
 ];
 const feedMount = document.getElementById('feedGame');
 let picks = new Set();
-posts.sort(() => Math.random() - .5).forEach((p, i) => {
+posts.sort(() => Math.random() - .5).forEach((p) => {
   const d = document.createElement('div');
   d.className = 'post-card';
   d.innerHTML = '<p>' + p.t + '</p>';
@@ -694,13 +1095,38 @@ posts.sort(() => Math.random() - .5).forEach((p, i) => {
       const eng = 40 + hits * 20;
       document.getElementById('feedScore').innerHTML =
         '<div class="score-pill">Kai watched ' + eng + '% of your feed ' +
-        (hits === 3 ? '— the algorithm would promote you! 🔥' : '— the real algorithm matched Kai\'s data better: surf, food, gaming.') + '</div>';
+        (hits === 3 ? '— the algorithm would promote you! 🔥' : '— the real algorithm matched Kai\'s data better: surf, food, gaming.') + '</div>' +
+        '<p class="muted" style="margin-top:8px">That choosing you just did? That\'s <b>curation</b> — AI does it billions of times a day, using engagement data instead of gut feeling.</p>';
+      req('algorithm', 'feed');
     } else document.getElementById('feedScore').innerHTML = '';
   };
   feedMount.appendChild(d);
 });
 
-// ---------- generative vs analytical sort ----------
+// sentiment machine
+const POS = ['best','love','amazing','great','awesome','ono','delicious','fun','win','beautiful','happy','perfect','favorite','excited','cool'];
+const NEG = ['worst','hate','terrible','awful','gross','boring','brutal','sad','angry','bad','slow','broken','annoying','fail','ugly'];
+document.getElementById('sentiBtn').onclick = () => {
+  const text = document.getElementById('sentiInput').value.trim();
+  if (!text) return;
+  const words = text.toLowerCase().replace(/[^a-z\s']/g, '').split(/\s+/);
+  let score = 0;
+  const marked = words.map(w => {
+    if (POS.includes(w)) { score++; return '<span class="senti-word pos">' + w + '</span>'; }
+    if (NEG.includes(w)) { score--; return '<span class="senti-word neg">' + w + '</span>'; }
+    return '<span class="senti-word neu">' + w + '</span>';
+  }).join(' ');
+  const verdict = score > 0 ? ['POSITIVE 😊', '#7de8bc'] : score < 0 ? ['NEGATIVE 😠', '#f8a3a3'] : ['NEUTRAL 😐', '#9ec8ff'];
+  document.getElementById('sentiOut').innerHTML =
+    '<div style="margin:8px 0">' + marked + '</div>' +
+    '<div class="score-pill" style="border-color:' + verdict[1] + ';color:' + verdict[1] + '">Classified: ' + verdict[0] + '</div>' +
+    '<p class="muted" style="margin-top:8px">An ad platform would now ' +
+    (score > 0 ? 'boost this post to similar users and sell ads next to it.' : score < 0 ? 'show it less, or flag it for review.' : 'need more signals — maybe your emoji or watch time.') + '</p>';
+  req('algorithm', 'sentiment');
+};
+document.getElementById('sentiInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('sentiBtn').click(); });
+
+// sort game
 const sortItems = [
   { t: 'Writing a brand-new song in the style of your favorite artist', gen: true },
   { t: 'Predicting which video you\'ll watch next', gen: false },
@@ -732,6 +1158,7 @@ sortItems.sort(() => Math.random() - .5).forEach(it => {
       if (sortAnswered === sortItems.length) {
         document.getElementById('sortScore').innerHTML =
           '<div class="score-pill">' + sortRight + ' / ' + sortItems.length + (sortRight === sortItems.length ? ' — flawless! 🎯' : '') + '</div>';
+        req('algorithm', 'sort');
       }
     };
     btns.appendChild(b);
@@ -740,14 +1167,35 @@ sortItems.sort(() => Math.random() - .5).forEach(it => {
   sortMount.appendChild(row);
 });
 
-// ---------- final practice quiz (the 5 real post-test questions) ----------
+buildQuiz('algoQuiz', [
+  { q: 'What does it mean for an AI algorithm to "curate" content on a social media feed?',
+    opts: ['To delete old or unpopular posts', 'To organize and present content based on user data and preferences', 'To randomly display all available content', 'To allow users to manually select everything they see'],
+    a: 1, why: 'Curation = organizing content around YOUR data — exactly what you did for Kai.' },
+  { q: 'What is the fundamental difference between generative AI and analytical AI?',
+    opts: ['Generative AI creates new content, while analytical AI interprets and categorizes existing data', 'Generative AI requires more computational power', 'Generative is for creative tasks, analytical is for scientific research', 'They rely on different types of algorithms'],
+    a: 0, why: 'Create new vs. interpret existing — the sentiment machine analyzed; Brainstorm Bot generated.' },
+], { onDone: () => req('algorithm', 'quiz_algo') });
+
+// ---- Station 7: studio self-checks ----
+document.querySelectorAll('.selfcheck').forEach(el => {
+  const key = el.dataset.check;
+  const sync = () => {
+    const on = reqMet('studio', key);
+    el.classList.toggle('on', on);
+    el.querySelector('.box').textContent = on ? '✓' : '';
+  };
+  el.onclick = () => { req('studio', key); sync(); };
+  sync();
+});
+
+// ---- Station 8: final quiz (the 5 real post-test questions) ----
 buildQuiz('finalQuiz', [
   { q: '1. Which of the following best describes "Artificial Intelligence" (AI)?',
     opts: ['A type of computer hardware that processes information quickly', 'Software used for creating digital art and designs', 'Complex computer code that follows pre-programmed instructions', 'Machines that can learn from data and perform tasks that typically require human intelligence'],
     a: 3, why: 'AI = machines that learn from data and do tasks needing human-like intelligence.' },
   { q: '2. What is the fundamental concept behind how AI is able to generate text, images, or videos?',
     opts: ['It uses pre-written scripts and templates', 'It learns patterns from large amounts of data', 'It directly copies existing human-created content', 'It relies on random number generation'],
-    a: 1, why: 'Patterns from data — the predictive-text idea, scaled up.' },
+    a: 1, why: 'Patterns from data — you proved it in the predictive-text and spam-trainer games.' },
   { q: '3. What does it mean for an AI algorithm to "curate" content, such as on a social media feed?',
     opts: ['To delete old or unpopular posts', 'To organize and present content based on user data and preferences', 'To randomly display all available content', 'To allow users to manually select everything they see'],
     a: 1, why: 'Curation = organizing content around YOUR data — likes, watch time, follows.' },
@@ -757,7 +1205,7 @@ buildQuiz('finalQuiz', [
   { q: '5. What is the role of a "prompt" when using AI tools for text or image generation?',
     opts: ['It\'s an instruction or input given to the AI to guide its creation', 'It\'s the final output generated by the AI', 'It\'s a technical error that occurs during the AI process', 'It\'s a type of file format used for AI-generated media'],
     a: 0, why: 'You wrote prompts all day — instructions that guide the AI\'s creation.' },
-], 'finalScore');
+], { scoreId: 'finalScore', onDone: () => req('premiere', 'quiz_final') });
 </script>
 </body>
 </html>
