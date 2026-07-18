@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Digital Media & AI — Media Lab</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f0f1a; color: #f0f0f0; min-height: 100vh; padding-bottom: 80px;
+  }
+  header { text-align: center; padding: 22px 16px 10px; }
+  header h1 {
+    font-size: 26px; font-weight: 700; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #a78bfa, #60a5fa, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  header p { color: #8b8ba7; font-size: 13px; margin-top: 4px; }
+
+  .progress-wrap { max-width: 760px; margin: 10px auto 0; padding: 0 16px; }
+  .progress-bar { height: 8px; background: #1a1a2e; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; border-radius: 4px;
+    background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399); transition: width .4s; }
+  .progress-label { font-size: 11px; color: #8b8ba7; text-align: right; margin-top: 4px; }
+
+  nav {
+    display: flex; gap: 6px; overflow-x: auto; padding: 14px 16px 10px;
+    max-width: 792px; margin: 0 auto; -webkit-overflow-scrolling: touch;
+  }
+  nav button {
+    flex: 0 0 auto; background: #1a1a2e; border: 1.5px solid #2d2d4a; border-radius: 20px;
+    color: #c0c0d8; font-size: 13px; font-weight: 600; padding: 9px 14px; cursor: pointer;
+    -webkit-appearance: none; white-space: nowrap;
+  }
+  nav button.active { border-color: #a78bfa; background: #2a1a4a; color: #fff; }
+  nav button.done::after { content: " ✓"; color: #34d399; }
+
+  main { max-width: 760px; margin: 0 auto; padding: 6px 16px 40px; }
+  section { display: none; }
+  section.visible { display: block; animation: fadeIn .25s; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform:none;} }
+
+  .card {
+    background: #1a1a2e; border: 1px solid #2d2d4a; border-radius: 16px;
+    padding: 20px; margin-bottom: 14px;
+  }
+  .card h2 { font-size: 21px; margin-bottom: 4px; }
+  .card h3 { font-size: 16px; margin-bottom: 8px; color: #e6e6f5; }
+  .card p, .card li { font-size: 15px; line-height: 1.55; color: #c9c9de; }
+  .card ul, .card ol { padding-left: 22px; margin: 8px 0; }
+  .card li { margin-bottom: 6px; }
+  .muted { color: #8b8ba7; font-size: 13px; }
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: #a78bfa; background: #2a1a4a; border-radius: 6px;
+    padding: 3px 8px; margin-bottom: 8px;
+  }
+  .badge.time { color: #60a5fa; background: #142138; }
+  .key {
+    background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
+    padding: 12px 14px; margin: 10px 0; font-size: 15px; line-height: 1.5;
+  }
+  .key b { color: #a78bfa; }
+
+  .checkpoint {
+    background: linear-gradient(135deg, #2a1a4a, #142138); border: 2px solid #a78bfa;
+    border-radius: 16px; padding: 22px; margin-bottom: 14px; text-align: center;
+  }
+  .checkpoint .cp-icon { font-size: 34px; }
+  .checkpoint h3 { font-size: 18px; margin: 8px 0 6px; color: #fff; }
+  .checkpoint p { color: #c9c9de; font-size: 14px; line-height: 1.5; }
+
+  .step { display: flex; gap: 14px; margin-bottom: 14px; }
+  .step-num {
+    flex: 0 0 30px; height: 30px; border-radius: 50%; background: #2a1a4a;
+    border: 1.5px solid #a78bfa; color: #d6c6ff; font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+  .step-body { flex: 1; }
+  .step-body p { font-size: 15px; line-height: 1.5; color: #e0e0f0; }
+  .step-body .muted { display: block; margin-top: 3px; }
+  .step-body img {
+    width: 100%; border-radius: 12px; border: 1px solid #2d2d4a; margin-top: 10px;
+  }
+
+  .btn {
+    display: inline-block; background: linear-gradient(135deg, #7c5cf0, #4f8ef7);
+    color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700;
+    padding: 14px 22px; cursor: pointer; -webkit-appearance: none; text-decoration: none;
+    text-align: center;
+  }
+  .btn.secondary { background: #1a1a2e; border: 1.5px solid #3d3d5c; color: #c0c0d8; font-weight: 600; }
+  .btn.small { font-size: 14px; padding: 10px 16px; }
+  .btn:active { opacity: .8; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+  .choice {
+    display: block; width: 100%; text-align: left; background: #0f0f1a;
+    border: 1.5px solid #3d3d5c; border-radius: 12px; color: #e0e0f0; font-size: 15px;
+    line-height: 1.4; padding: 13px 15px; margin-bottom: 9px; cursor: pointer; -webkit-appearance: none;
+  }
+  .choice.correct { border-color: #34d399; background: #10291f; }
+  .choice.wrong { border-color: #f87171; background: #2b1420; }
+  .choice:disabled { cursor: default; }
+  .feedback { font-size: 14px; line-height: 1.5; margin: 6px 0 14px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.good { color: #34d399; }
+  .feedback.bad { color: #f8a3a3; }
+
+  .sort-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
+    padding: 11px 14px; margin-bottom: 9px;
+  }
+  .sort-item span { font-size: 14px; line-height: 1.35; color: #e0e0f0; flex: 1; }
+  .sort-item .sort-btns { display: flex; gap: 6px; }
+  .sort-item button {
+    -webkit-appearance: none; border: 1.5px solid #3d3d5c; background: #1a1a2e; color: #c0c0d8;
+    border-radius: 9px; font-size: 12px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+  }
+  .sort-item.right { border-color: #34d399; }
+  .sort-item.wrong2 { border-color: #f87171; }
+
+  .post-card {
+    background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 9px; cursor: pointer;
+  }
+  .post-card.picked { border-color: #60a5fa; background: #142138; }
+  .post-card h4 { font-size: 14px; color: #e6e6f5; margin-bottom: 2px; }
+  .post-card p { font-size: 13px; color: #9a9ab5; }
+
+  .copybox {
+    background: #0f0f1a; border: 1px dashed #4a4a6a; border-radius: 10px;
+    padding: 12px 14px; font-size: 14px; color: #c9c9de; line-height: 1.55; margin: 10px 0;
+    font-family: ui-monospace, Menlo, monospace;
+  }
+
+  .done-row { margin-top: 16px; text-align: center; }
+  .done-btn {
+    -webkit-appearance: none; background: #10291f; border: 1.5px solid #34d399; color: #7de8bc;
+    border-radius: 12px; font-size: 15px; font-weight: 700; padding: 13px 22px; cursor: pointer;
+  }
+  .done-btn.checked { background: #34d399; color: #06281a; }
+
+  .toolgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .tool {
+    background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 12px; padding: 13px 14px;
+  }
+  .tool h4 { font-size: 14px; color: #e6e6f5; margin-bottom: 3px; }
+  .tool p { font-size: 12px; color: #9a9ab5; line-height: 1.45; }
+
+  .predict-word {
+    -webkit-appearance: none; background: #2a1a4a; border: 1.5px solid #a78bfa; color: #d6c6ff;
+    border-radius: 10px; font-size: 15px; font-weight: 600; padding: 10px 14px; cursor: pointer;
+    margin: 0 6px 8px 0;
+  }
+  .sentence-box {
+    background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
+    padding: 14px; font-size: 17px; line-height: 1.5; min-height: 56px; margin-bottom: 12px;
+  }
+  .score-pill {
+    display: inline-block; background: #142138; border: 1.5px solid #60a5fa; color: #9ec8ff;
+    border-radius: 999px; font-size: 14px; font-weight: 700; padding: 8px 16px; margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Digital Media &amp; AI</h1>
+  <p>Project Hōkūlani Media Lab · work at your own pace</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label" id="progressLabel">0 of 7 stations complete</div>
+</div>
+
+<nav id="nav"></nav>
+
+<main id="main">
+
+<!-- ============ STATION 0: START ============ -->
+<section data-id="start">
+  <div class="card">
+    <span class="badge">Station 1</span>
+    <span class="badge time">10 min</span>
+    <h2>🏁 Welcome to the Media Lab</h2>
+    <p style="margin-top:8px">Today you'll learn how AI creates the media you see every day — and you'll use it to make your own. By the end you will have:</p>
+    <ul>
+      <li>🖼️ An AI-generated <b>ad campaign</b> you designed with prompts</li>
+      <li>🎬 A <b>travel video</b> with an AI voiceover, made in CapCut</li>
+      <li>🧠 The skills to tell what's real, what's AI, and how the algorithm sees <i>you</i></li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>How today works</h3>
+    <ul>
+      <li>Move through the stations <b>at your own pace</b> using the buttons at the top.</li>
+      <li>When you see a <b style="color:#a78bfa">⏸ CHECKPOINT</b> card, <b>stop</b> — we do that part together on the big screen.</li>
+      <li>Tap <b style="color:#7de8bc">Mark station complete</b> when you finish each station.</li>
+      <li>Stuck? Ask a neighbor first, then raise your hand.</li>
+    </ul>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="start">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 1: SPOT THE AI ============ -->
+<section data-id="spot">
+  <div class="card">
+    <span class="badge">Station 2</span>
+    <span class="badge time">20 min</span>
+    <h2>🕵️ Spot the AI</h2>
+    <p style="margin-top:8px">AI can now make videos of real people saying things they never said. These are called <b>deepfakes</b>.</p>
+    <div class="key"><b>Deepfake:</b> media (usually video or audio) created or altered by AI to make it look like someone said or did something they didn't.</div>
+  </div>
+
+  <div class="checkpoint">
+    <div class="cp-icon">⏸</div>
+    <h3>CHECKPOINT — Eyes up front</h3>
+    <p>We're watching the deepfake videos <b>together on the big screen</b>. Don't play videos on your iPad. When the videos end, come back here.</p>
+  </div>
+
+  <div class="card">
+    <h3>Your turn: could you tell?</h3>
+    <p class="muted" style="margin-bottom:10px">Tap the answer you think is right.</p>
+    <div id="spotQuiz"></div>
+  </div>
+
+  <div class="card">
+    <h3>Talk about it (with your table)</h3>
+    <ul>
+      <li>What gave the fakes away — or didn't?</li>
+      <li>If video can be faked, how should that change what you trust online?</li>
+    </ul>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="spot">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 2: AI DECODED ============ -->
+<section data-id="decoded">
+  <div class="card">
+    <span class="badge">Station 3</span>
+    <span class="badge time">25 min</span>
+    <h2>🧠 AI, Decoded</h2>
+    <p style="margin-top:8px">So what actually <i>is</i> AI?</p>
+    <div class="key"><b>Artificial Intelligence:</b> machines that can <b>learn from data</b> and perform tasks that normally require human intelligence.</div>
+    <p>Not hardware. Not just any computer code. The key word is <b>learn</b> — nobody writes rules like "a cat has pointy ears." The AI figures that out itself by studying millions of examples.</p>
+  </div>
+
+  <div class="card">
+    <h3>How does it learn?</h3>
+    <div class="key"><b>The core idea:</b> AI learns <b>patterns from huge amounts of data</b>, then uses those patterns to make predictions or create new things.</div>
+    <ul>
+      <li>📥 <b>Data in</b> — millions of photos, sentences, songs, videos</li>
+      <li>🔍 <b>Find patterns</b> — what usually follows what? what goes together?</li>
+      <li>📤 <b>Predict &amp; create</b> — use the patterns to guess the next word, draw a new image, write a script</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>🔮 Try it: be the AI</h3>
+    <p>Predictive text is AI in your pocket. This mini-AI learned patterns from example sentences. Tap the word you think comes next — you're doing exactly what AI does.</p>
+    <div class="sentence-box" id="predictSentence">Aloha, today we are going to the</div>
+    <div id="predictChoices"></div>
+    <p class="muted">Notice: the AI never "understands" — it just knows which words <i>usually follow</i> other words, from patterns in its data. ChatGPT works the same way, with trillions of examples.</p>
+  </div>
+
+  <div class="card">
+    <h3>Check yourself</h3>
+    <div id="decodedQuiz"></div>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="decoded">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 3: PROMPT LAB ============ -->
+<section data-id="prompt">
+  <div class="card">
+    <span class="badge">Station 4</span>
+    <span class="badge time">40 min</span>
+    <h2>✨ Prompt Lab: Build a Campaign</h2>
+    <p style="margin-top:8px">You talk to generative AI with <b>prompts</b>.</p>
+    <div class="key"><b>Prompt:</b> an instruction or input given to the AI to guide what it creates.</div>
+    <p>Better prompt → better result. Vague in, vague out.</p>
+  </div>
+
+  <div class="card">
+    <h3>Weak vs. strong prompts</h3>
+    <div class="copybox">😐 "a shoe"</div>
+    <p class="muted" style="margin-bottom:10px">The AI has to guess everything: style, color, setting, mood.</p>
+    <div class="copybox">🤩 "a futuristic eco-friendly running shoe made of woven bamboo, product photo, bright studio lighting, ocean background"</div>
+    <p class="muted">Subject + details + style + setting. Now the AI knows exactly what patterns to draw on.</p>
+  </div>
+
+  <div class="card">
+    <h3>Your mission: an ad campaign for an eco-friendly product</h3>
+    <div class="step"><div class="step-num">1</div><div class="step-body">
+      <p><b>Invent a product.</b> Something eco-friendly that should exist: solar backpack? Reef-safe surf wax? Compostable phone case?</p>
+    </div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body">
+      <p><b>Write your slogan + 2–3 bullet points</b> in the Notes app. What makes it cool? Who is it for?</p>
+    </div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-body">
+      <p><b>Craft your image prompt</b> using the formula: <i>subject + details + style + setting</i>.</p>
+    </div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body">
+      <p><b>Generate your ad image</b> in AI Image Studio. Try at least 3 different prompts — refine each time.</p>
+      <div class="btn-row"><a class="btn" href="https://5ninefish.github.io/hokulani-ai-image-studio/" target="_blank">Open AI Image Studio →</a></div>
+    </div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body">
+      <p><b>Save your best image:</b> long-press the image → <b>Save to Photos</b>.</p>
+      <img src="img/slide14_image35.jpg" alt="Long press and Save to Photos">
+    </div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-body">
+      <p><b>Feedback swap:</b> show your campaign (image + slogan) to two neighbors. Tell them one thing that grabs you and one thing to improve. Be kind and specific.</p>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Check yourself</h3>
+    <div id="promptQuiz"></div>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="prompt">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 4: THE ALGORITHM ============ -->
+<section data-id="algorithm">
+  <div class="card">
+    <span class="badge">Station 5</span>
+    <span class="badge time">30 min</span>
+    <h2>📡 The Algorithm Knows You</h2>
+    <p style="margin-top:8px">Why does your TikTok feed feel like it reads your mind? Because an AI <b>curates</b> it.</p>
+    <div class="key"><b>Curate:</b> to organize and present content based on <b>your data and preferences</b> — your likes, comments, watch time, and follows.</div>
+  </div>
+
+  <div class="card">
+    <h3>🎮 You are the algorithm</h3>
+    <p>Meet <b>Kai, 15, from Honolulu</b>. Kai's data: watches surf videos to the end, likes food posts, skips dance clips in 2 seconds, follows 3 gaming creators.</p>
+    <p style="margin: 8px 0"><b>Pick the 3 posts</b> you'd put at the top of Kai's feed:</p>
+    <div id="feedGame"></div>
+    <div id="feedScore"></div>
+    <p class="muted" style="margin-top:8px">That choosing you just did? That's curation — and AI does it billions of times a day, using engagement data instead of gut feeling.</p>
+  </div>
+
+  <div class="card">
+    <h3>Two kinds of AI</h3>
+    <div class="key">
+      <b>Generative AI</b> <i>creates new content</i> — text, images, music, video.<br><br>
+      <b>Analytical AI</b> <i>interprets and categorizes existing data</i> — predicting, sorting, recommending.
+    </div>
+    <p>Your feed uses <b>analytical</b> AI (studying your behavior). AI Image Studio is <b>generative</b> (making something new).</p>
+  </div>
+
+  <div class="card">
+    <h3>🗂 Sort it: generative or analytical?</h3>
+    <div id="sortGame"></div>
+    <div id="sortScore"></div>
+  </div>
+
+  <div class="card">
+    <h3>Talk about it (with your table)</h3>
+    <ul>
+      <li>Ads seem to "know" what you want. Convenient — or creepy? Where's the line?</li>
+      <li>If the algorithm only shows you what you already like, what do you never see?</li>
+    </ul>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="algorithm">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 5: VIDEO STUDIO ============ -->
+<section data-id="studio">
+  <div class="card">
+    <span class="badge">Station 6</span>
+    <span class="badge time">70 min</span>
+    <h2>🎬 Video Studio</h2>
+    <p style="margin-top:8px">The big one: make a <b>travel video</b> with an AI voiceover in CapCut. You're combining <i>everything</i> — generative AI (the voice), curation (picking your best shots), and editing craft.</p>
+  </div>
+
+  <div class="card">
+    <h3>Part 1 — Get your photos &amp; script</h3>
+    <div class="step"><div class="step-num">1</div><div class="step-body">
+      <p><b>Pick a country</b> (or a Hawaiian island). Download <b>10 photos</b> of it from Unsplash — free, no login.</p>
+      <div class="btn-row"><a class="btn small" href="https://unsplash.com" target="_blank">Open Unsplash →</a></div>
+      <span class="muted">Long-press each photo → Save to Photos.</span>
+    </div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-body">
+      <p><b>Write your script in Notes</b> — 1–2 short sentences per photo. Use this shape:</p>
+      <div class="copybox">Welcome to Japan, home of ancient temples and neon cities.<br><br>This is Mount Fuji, Japan's tallest mountain.<br><br>In Tokyo, over 37 million people ride the world's busiest trains.<br><br>...(one short paragraph per photo, blank line between each)</div>
+      <span class="muted">The blank lines matter — CapCut will split each paragraph into its own caption.</span>
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>Part 2 — Build it in CapCut</h3>
+    <div class="step"><div class="step-num">3</div><div class="step-body">
+      <p>Open <b>CapCut</b> → New project → select your <b>10 country photos</b> → Add.</p>
+      <img src="img/slide36_image73.jpg" alt="Selecting 10 photos in CapCut">
+    </div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-body">
+      <p><b>Drag photos to reorder</b> them to match your script, then tap <b>Text → Text to audio</b>.</p>
+      <img src="img/slide37_image76.jpg" alt="Reorder photos and open Text to audio">
+    </div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-body">
+      <p><b>Paste your script</b> (with the blank lines). Choose an AI voice <b>without a purple gem</b> (those are premium). Tap <b>Split text automatically → Split</b>.</p>
+      <img src="img/slide38_image79.jpg" alt="Paste script, choose free AI voice, split automatically">
+    </div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-body">
+      <p><b>Line up timing:</b> drag each photo's right edge to match the end of its caption, so each picture stays on screen while its line is spoken.</p>
+      <img src="img/slide39_image80.jpg" alt="Align photo edges with captions">
+    </div></div>
+    <div class="step"><div class="step-num">7</div><div class="step-body">
+      <p><b>Style your captions:</b> tap the text on screen → pick a style → tap the checkmark → <b>Regenerate</b> to apply to all captions.</p>
+      <img src="img/slide40_image81.jpg" alt="Edit caption style and regenerate">
+    </div></div>
+    <div class="step"><div class="step-num">8</div><div class="step-body">
+      <p><b>Add music:</b> tap <b>Audio → Sounds</b> → pick a song → tap <b>+</b>.</p>
+      <img src="img/slide41_image84.jpg" alt="Add music from CapCut sounds">
+    </div></div>
+    <div class="step"><div class="step-num">9</div><div class="step-body">
+      <p><b>Trim the music:</b> scroll to the end of your photos → select the music track → <b>Split</b> → delete the leftover piece.</p>
+      <img src="img/slide42_image86.jpg" alt="Split and delete extra music">
+    </div></div>
+    <div class="step"><div class="step-num">10</div><div class="step-body">
+      <p><b>Fade out:</b> select the music track → <b>Fade → Fade out → 3 seconds</b>. Then tap <b>Export</b>.</p>
+      <img src="img/slide43_image88.jpg" alt="Fade out music and export">
+    </div></div>
+    <div class="step"><div class="step-num">11</div><div class="step-body">
+      <p><b>Save it:</b> tap <b>Other → Save to Video</b>. Done! 🎉</p>
+      <img src="img/slide44_image89.jpg" alt="Save to video">
+    </div></div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 Finished early?</h3>
+    <ul>
+      <li>Try CapCut's <b>AI Lab</b>: type "Travel video highlighting [your country]" and compare its auto-video to yours. Which is better? Why?</li>
+      <li>Generate a movie-poster image for your video in AI Image Studio.</li>
+      <li>Add auto-captions to a different video clip.</li>
+    </ul>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="studio">Mark station complete ✓</button></div>
+</section>
+
+<!-- ============ STATION 6: PREMIERE ============ -->
+<section data-id="premiere">
+  <div class="card">
+    <span class="badge">Station 7</span>
+    <span class="badge time">35 min</span>
+    <h2>🏆 Premiere &amp; Level Up</h2>
+  </div>
+
+  <div class="checkpoint">
+    <div class="cp-icon">⏸</div>
+    <h3>CHECKPOINT — Premiere time</h3>
+    <p>We'll watch volunteer videos <b>together on the big screen</b>. While watching, notice: what choices did each creator make? What did the AI do vs. what did the human do?</p>
+  </div>
+
+  <div class="card">
+    <h3>Your AI toolbox going forward</h3>
+    <p class="muted" style="margin-bottom:8px">Free tools you can keep using after today:</p>
+    <div class="toolgrid">
+      <div class="tool"><h4>CapCut</h4><p>Video editing + AI voiceover, captions, effects. What you used today.</p></div>
+      <div class="tool"><h4>AI Image Studio</h4><p>Prompt-based image generation, no login. Bookmark it.</p></div>
+      <div class="tool"><h4>Canva</h4><p>The design tool used in almost every school & job — AI image gen, video, presentations (needs an account).</p></div>
+      <div class="tool"><h4>iMovie</h4><p>Apple's free editor on your iPad — includes free stock music. No AI, but great for polish.</p></div>
+      <div class="tool"><h4>ChatGPT / Claude / Gemini</h4><p>AI writing partners — brainstorm scripts, slogans, study help.</p></div>
+      <div class="tool"><h4>Unsplash</h4><p>Free professional photos for any project, no login.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎯 Final check: prove you've got it</h3>
+    <p class="muted" style="margin-bottom:10px">These are practice versions of your post-test questions. Get them right here and the real test is easy.</p>
+    <div id="finalQuiz"></div>
+    <div id="finalScore"></div>
+  </div>
+
+  <div class="card">
+    <h3>📝 The real post-test</h3>
+    <p>When your instructor says go, complete the official post-test:</p>
+    <div class="btn-row"><a class="btn" id="postTestLink" href="#" target="_blank">Open Post-Test →</a></div>
+    <p class="muted" style="margin-top:8px">(Link provided by your instructor)</p>
+  </div>
+  <div class="done-row"><button class="done-btn" data-done="premiere">Mark station complete ✓</button></div>
+</section>
+
+</main>
+
+<script>
+// ---------- stations / nav / progress ----------
+const stations = [
+  { id: 'start',     label: '🏁 Start' },
+  { id: 'spot',      label: '🕵️ Spot the AI' },
+  { id: 'decoded',   label: '🧠 AI Decoded' },
+  { id: 'prompt',    label: '✨ Prompt Lab' },
+  { id: 'algorithm', label: '📡 Algorithm' },
+  { id: 'studio',    label: '🎬 Video Studio' },
+  { id: 'premiere',  label: '🏆 Premiere' },
+];
+const nav = document.getElementById('nav');
+const sections = {};
+document.querySelectorAll('section').forEach(s => sections[s.dataset.id] = s);
+let doneSet = new Set(JSON.parse(localStorage.getItem('ml_done') || '[]'));
+
+stations.forEach(st => {
+  const b = document.createElement('button');
+  b.textContent = st.label;
+  b.dataset.target = st.id;
+  b.onclick = () => show(st.id);
+  nav.appendChild(b);
+});
+
+function show(id) {
+  Object.values(sections).forEach(s => s.classList.remove('visible'));
+  sections[id].classList.add('visible');
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.target === id));
+  window.scrollTo({ top: 0 });
+  localStorage.setItem('ml_current', id);
+}
+
+function refreshProgress() {
+  nav.querySelectorAll('button').forEach(b => b.classList.toggle('done', doneSet.has(b.dataset.target)));
+  const pct = Math.round(doneSet.size / stations.length * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = doneSet.size + ' of ' + stations.length + ' stations complete';
+}
+
+document.querySelectorAll('.done-btn').forEach(btn => {
+  const id = btn.dataset.done;
+  const sync = () => {
+    btn.classList.toggle('checked', doneSet.has(id));
+    btn.textContent = doneSet.has(id) ? 'Station complete ✓' : 'Mark station complete ✓';
+  };
+  btn.onclick = () => {
+    doneSet.has(id) ? doneSet.delete(id) : doneSet.add(id);
+    localStorage.setItem('ml_done', JSON.stringify([...doneSet]));
+    sync(); refreshProgress();
+    if (doneSet.has(id)) {
+      const i = stations.findIndex(s => s.id === id);
+      if (i >= 0 && i < stations.length - 1) show(stations[i + 1].id);
+    }
+  };
+  sync();
+});
+refreshProgress();
+show(localStorage.getItem('ml_current') || 'start');
+
+// ---------- quiz builder ----------
+function buildQuiz(mountId, questions, scoreId) {
+  const mount = document.getElementById(mountId);
+  let answered = 0, correct = 0;
+  questions.forEach(q => {
+    const wrap = document.createElement('div');
+    const h = document.createElement('p');
+    h.style.cssText = 'font-size:15px;font-weight:600;color:#e6e6f5;margin:14px 0 8px';
+    h.textContent = q.q;
+    wrap.appendChild(h);
+    const fb = document.createElement('div');
+    fb.className = 'feedback';
+    const idx = q.opts.map((_, i) => i).sort(() => Math.random() - .5);
+    idx.forEach(i => {
+      const c = document.createElement('button');
+      c.className = 'choice';
+      c.textContent = q.opts[i];
+      c.onclick = () => {
+        if (wrap.dataset.locked) return;
+        wrap.dataset.locked = '1';
+        answered++;
+        wrap.querySelectorAll('.choice').forEach(x => x.disabled = true);
+        if (i === q.a) {
+          correct++;
+          c.classList.add('correct');
+          fb.textContent = '✓ ' + q.why;
+          fb.classList.add('show', 'good');
+        } else {
+          c.classList.add('wrong');
+          wrap.querySelectorAll('.choice').forEach(x => { if (x.textContent === q.opts[q.a]) x.classList.add('correct'); });
+          fb.textContent = '✗ ' + q.why;
+          fb.classList.add('show', 'bad');
+        }
+        if (scoreId && answered === questions.length) {
+          document.getElementById(scoreId).innerHTML =
+            '<div class="score-pill">You got ' + correct + ' / ' + questions.length + (correct === questions.length ? ' — perfect! 🎉' : ' — review the ✗ ones above') + '</div>';
+        }
+      };
+      wrap.appendChild(c);
+    });
+    wrap.appendChild(fb);
+    mount.appendChild(wrap);
+  });
+}
+
+// Station 2: spot-the-AI intuition
+buildQuiz('spotQuiz', [
+  { q: 'A video shows a celebrity endorsing a product, but their blinks look odd and the voice is slightly flat. Most likely:',
+    opts: ['A real but low-quality recording', 'A deepfake — AI-generated or AI-altered media', 'A video filter', 'A dubbed translation'],
+    a: 1, why: 'Unnatural blinking, flat audio, and mismatched lip-sync are classic deepfake tells.' },
+  { q: 'Best FIRST move when a shocking video of a public figure appears in your feed:',
+    opts: ['Share it before it gets taken down', 'Check if trusted news sources report the same thing', 'Assume it\'s real if it has millions of views', 'Comment to ask if it\'s real'],
+    a: 1, why: 'Verification beats virality — views and comments prove nothing about authenticity.' },
+], null);
+
+// Station 3: AI decoded checks (post-test Q1 + Q2)
+buildQuiz('decodedQuiz', [
+  { q: 'Which best describes Artificial Intelligence?',
+    opts: ['Computer hardware that processes information quickly', 'Software used for creating digital art and designs', 'Complex code that follows pre-programmed instructions', 'Machines that can learn from data and perform tasks that typically require human intelligence'],
+    a: 3, why: 'The key is learning from data — not fixed hardware, one app, or pre-written rules.' },
+  { q: 'What is the fundamental concept behind how AI generates text, images, or videos?',
+    opts: ['It uses pre-written scripts and templates', 'It learns patterns from large amounts of data', 'It directly copies existing human-created content', 'It relies on random number generation'],
+    a: 1, why: 'Just like the predictive-text game — patterns from data, applied to make something new.' },
+], null);
+
+// Station 4: prompt check (post-test Q5)
+buildQuiz('promptQuiz', [
+  { q: 'What is the role of a "prompt" when using AI tools?',
+    opts: ['It\'s an instruction or input given to the AI to guide its creation', 'It\'s the final output generated by the AI', 'It\'s a technical error during the AI process', 'It\'s a file format for AI-generated media'],
+    a: 0, why: 'The prompt is your instruction — the steering wheel for the AI.' },
+  { q: 'Which prompt will give the most predictable, useful ad image?',
+    opts: ['"something cool"', '"a shoe ad"', '"a bamboo running shoe, product photo, studio lighting, ocean background"', '"make it good please"'],
+    a: 2, why: 'Subject + details + style + setting — specific prompts steer the patterns.' },
+], null);
+
+// ---------- predictive text toy ----------
+const chains = {
+  'the': ['beach', 'mall', 'mountains'],
+  'beach': ['to', 'with', 'because'],
+  'mall': ['to', 'with', 'because'],
+  'mountains': ['to', 'with', 'because'],
+  'to': ['surf', 'eat', 'relax'],
+  'with': ['friends', 'family', 'my dog'],
+  'because': ['it\'s sunny', 'school is out', 'we love it'],
+};
+const endings = ['surf', 'eat', 'relax', 'friends', 'family', 'my dog', 'it\'s sunny', 'school is out', 'we love it'];
+let predictState = 'the';
+const sentEl = document.getElementById('predictSentence');
+const choiceEl = document.getElementById('predictChoices');
+function renderPredict() {
+  choiceEl.innerHTML = '';
+  const opts = chains[predictState];
+  if (!opts) {
+    const again = document.createElement('button');
+    again.className = 'btn secondary small';
+    again.textContent = '↺ Start over';
+    again.onclick = () => { predictState = 'the'; sentEl.textContent = 'Aloha, today we are going to the'; renderPredict(); };
+    choiceEl.appendChild(again);
+    return;
+  }
+  opts.forEach(w => {
+    const b = document.createElement('button');
+    b.className = 'predict-word';
+    b.textContent = w;
+    b.onclick = () => {
+      sentEl.textContent += ' ' + w;
+      predictState = endings.includes(w) && !chains[w] ? null : w;
+      if (!chains[w]) predictState = null;
+      renderPredict();
+    };
+    choiceEl.appendChild(b);
+  });
+}
+renderPredict();
+
+// ---------- feed curation game ----------
+const posts = [
+  { t: '🏄 "Massive waves at Pipeline today!" — surf clip', good: true },
+  { t: '🍜 "Rating every ramen spot in Honolulu" — food video', good: true },
+  { t: '🎮 "New update just dropped" — from a creator Kai follows', good: true },
+  { t: '💃 Trending dance challenge compilation', good: false },
+  { t: '🧶 "Knitting my 100th scarf" — craft tutorial', good: false },
+  { t: '📰 "Local election results explained"', good: false },
+];
+const feedMount = document.getElementById('feedGame');
+let picks = new Set();
+posts.sort(() => Math.random() - .5).forEach((p, i) => {
+  const d = document.createElement('div');
+  d.className = 'post-card';
+  d.innerHTML = '<p>' + p.t + '</p>';
+  d.onclick = () => {
+    if (d.classList.contains('picked')) { d.classList.remove('picked'); picks.delete(p); }
+    else if (picks.size < 3) { d.classList.add('picked'); picks.add(p); }
+    if (picks.size === 3) {
+      const hits = [...picks].filter(x => x.good).length;
+      const eng = 40 + hits * 20;
+      document.getElementById('feedScore').innerHTML =
+        '<div class="score-pill">Kai watched ' + eng + '% of your feed ' +
+        (hits === 3 ? '— the algorithm would promote you! 🔥' : '— the real algorithm matched Kai\'s data better: surf, food, gaming.') + '</div>';
+    } else document.getElementById('feedScore').innerHTML = '';
+  };
+  feedMount.appendChild(d);
+});
+
+// ---------- generative vs analytical sort ----------
+const sortItems = [
+  { t: 'Writing a brand-new song in the style of your favorite artist', gen: true },
+  { t: 'Predicting which video you\'ll watch next', gen: false },
+  { t: 'Creating an image of "a surfing robot" from a prompt', gen: true },
+  { t: 'Flagging a comment as positive, negative, or neutral', gen: false },
+  { t: 'Generating an AI voiceover for your travel video', gen: true },
+  { t: 'Deciding which ads you see based on your search history', gen: false },
+];
+const sortMount = document.getElementById('sortGame');
+let sortAnswered = 0, sortRight = 0;
+sortItems.sort(() => Math.random() - .5).forEach(it => {
+  const row = document.createElement('div');
+  row.className = 'sort-item';
+  const span = document.createElement('span');
+  span.textContent = it.t;
+  const btns = document.createElement('div');
+  btns.className = 'sort-btns';
+  [['🎨 Generative', true], ['📊 Analytical', false]].forEach(([label, val]) => {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.onclick = () => {
+      if (row.dataset.locked) return;
+      row.dataset.locked = '1';
+      sortAnswered++;
+      const ok = (val === it.gen);
+      if (ok) sortRight++;
+      row.classList.add(ok ? 'right' : 'wrong2');
+      span.textContent = (ok ? '✓ ' : '✗ ') + it.t + '  — ' + (it.gen ? 'creates new content → Generative' : 'interprets existing data → Analytical');
+      if (sortAnswered === sortItems.length) {
+        document.getElementById('sortScore').innerHTML =
+          '<div class="score-pill">' + sortRight + ' / ' + sortItems.length + (sortRight === sortItems.length ? ' — flawless! 🎯' : '') + '</div>';
+      }
+    };
+    btns.appendChild(b);
+  });
+  row.appendChild(span); row.appendChild(btns);
+  sortMount.appendChild(row);
+});
+
+// ---------- final practice quiz (the 5 real post-test questions) ----------
+buildQuiz('finalQuiz', [
+  { q: '1. Which of the following best describes "Artificial Intelligence" (AI)?',
+    opts: ['A type of computer hardware that processes information quickly', 'Software used for creating digital art and designs', 'Complex computer code that follows pre-programmed instructions', 'Machines that can learn from data and perform tasks that typically require human intelligence'],
+    a: 3, why: 'AI = machines that learn from data and do tasks needing human-like intelligence.' },
+  { q: '2. What is the fundamental concept behind how AI is able to generate text, images, or videos?',
+    opts: ['It uses pre-written scripts and templates', 'It learns patterns from large amounts of data', 'It directly copies existing human-created content', 'It relies on random number generation'],
+    a: 1, why: 'Patterns from data — the predictive-text idea, scaled up.' },
+  { q: '3. What does it mean for an AI algorithm to "curate" content, such as on a social media feed?',
+    opts: ['To delete old or unpopular posts', 'To organize and present content based on user data and preferences', 'To randomly display all available content', 'To allow users to manually select everything they see'],
+    a: 1, why: 'Curation = organizing content around YOUR data — likes, watch time, follows.' },
+  { q: '4. What is the fundamental difference between generative AI and analytical AI?',
+    opts: ['Generative AI creates new content, while analytical AI interprets and categorizes existing data', 'Generative AI requires more computational power than analytical AI', 'Generative AI is for creative tasks, analytical AI is for scientific research', 'Generative AI relies on different types of algorithms than analytical AI'],
+    a: 0, why: 'Create new vs. interpret existing — that\'s the split.' },
+  { q: '5. What is the role of a "prompt" when using AI tools for text or image generation?',
+    opts: ['It\'s an instruction or input given to the AI to guide its creation', 'It\'s the final output generated by the AI', 'It\'s a technical error that occurs during the AI process', 'It\'s a type of file format used for AI-generated media'],
+    a: 0, why: 'You wrote prompts all day — instructions that guide the AI\'s creation.' },
+], 'finalScore');
+</script>
+</body>
+</html>
