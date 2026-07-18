@@ -12,7 +12,8 @@ the ⏸ CHECKPOINT moments. Everything else runs itself.
 2. **Post-test link** — edit `index.html`, search for `postTestLink`, and paste
    your Google Form URL into the `href`.
 3. **Test on school Wi-Fi** — open the hub + generate one image in AI Image
-   Studio from the actual network.
+   Studio from the actual network. Also confirm one project-Gmail Canva login
+   works on an iPad.
 4. Queue the deepfake videos on your MacBook for the two checkpoint moments.
 
 ## The day
@@ -22,11 +23,11 @@ the ⏸ CHECKPOINT moments. Everything else runs itself.
 | 0:00 | 🏁 Start (10m) | Project the hub URL. Students open it, read how the day works. |
 | 0:10 | 🕵️ Spot the AI (20m) | **⏸ CHECKPOINT:** play deepfake videos on the big screen. Then students do the in-hub check + table discussion. |
 | 0:30 | 🧠 AI Decoded (25m) | Self-paced: concept cards, predictive-text game, check questions. Circulate. |
-| 0:55 | ✨ Prompt Lab (40m) | Self-paced: invent eco-product, craft prompts, generate ad in AI Image Studio, peer feedback swap. |
-| 1:35 | *Break (10m)* | |
-| 1:45 | 📡 Algorithm (30m) | Self-paced: "you are the algorithm" feed game, generative-vs-analytical sort, discussion. |
-| 2:15 | 🎬 Video Studio (70m) | The big build: Unsplash photos → script → CapCut → AI voiceover → captions → music → export. Every step has a screenshot in the hub. Early finishers have bonus challenges. |
-| 3:25 | 🏆 Premiere (25m) | **⏸ CHECKPOINT:** volunteers AirDrop/show videos on the big screen. Toolbox-for-the-future section. |
+| 0:55 | ✨ Prompt Lab (50m) | Self-paced: invent eco-product, craft prompts, generate ad image in AI Image Studio, **design the finished ad poster in Canva** (project Gmail login, free templates only — crown = paid), peer feedback swap. Early finishers try Canva AI chat. |
+| 1:45 | *Break (10m)* | |
+| 1:55 | 📡 Algorithm (30m) | Self-paced: "you are the algorithm" feed game, generative-vs-analytical sort, discussion. |
+| 2:25 | 🎬 Video Studio (65m) | The big build: Unsplash photos → script → CapCut → AI voiceover → captions → music → export. Every step has a screenshot in the hub. Early finishers have bonus challenges. |
+| 3:30 | 🏆 Premiere (20m) | **⏸ CHECKPOINT:** volunteers AirDrop/show videos on the big screen. Toolbox-for-the-future section. |
 | 3:50 | Post-test | Students do the 5-question practice quiz in the hub, then the real Google Form. |
 
 ## Post-test alignment (locked answers)
