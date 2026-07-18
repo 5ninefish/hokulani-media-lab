@@ -9,8 +9,8 @@ the ⏸ CHECKPOINT moments. Everything else runs itself.
    `hokulani-image` Worker. The free tier caps at ~125 images/day; 100 students
    will blow past that in the first 10 minutes of Prompt Lab.
    (Metered cost for a class day: roughly $1–3.)
-2. **Post-test link** — edit `index.html`, search for `postTestLink`, and paste
-   your Google Form URL into the `href`.
+2. **Post-test** — lives in Google Classroom (students already have it open);
+   the hub's final station tells them to switch over when you say go.
 3. **Test on school Wi-Fi** — open the hub + generate one image in AI Image
    Studio from the actual network. Also confirm one project-Gmail Canva login
    works on an iPad.
