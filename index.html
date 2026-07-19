@@ -18,7 +18,7 @@
   }
   header p { color: #8b8ba7; font-size: 13px; margin-top: 4px; }
 
-  .progress-wrap { max-width: 760px; margin: 10px auto 0; padding: 0 16px; }
+  .progress-wrap { max-width: 700px; margin: 10px auto 0; padding: 0 16px; }
   .progress-bar { height: 8px; background: #1a1a2e; border-radius: 4px; overflow: hidden; }
   .progress-fill { height: 100%; width: 0%; border-radius: 4px;
     background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399); transition: width .4s; }
@@ -26,7 +26,7 @@
 
   nav {
     display: flex; gap: 6px; overflow-x: auto; padding: 14px 16px 10px;
-    max-width: 792px; margin: 0 auto; -webkit-overflow-scrolling: touch;
+    max-width: 732px; margin: 0 auto; -webkit-overflow-scrolling: touch;
   }
   nav button {
     flex: 0 0 auto; background: #1a1a2e; border: 1.5px solid #2d2d4a; border-radius: 20px;
@@ -38,7 +38,7 @@
   nav button.locked { opacity: .38; }
   nav button.locked::before { content: "🔒 "; font-size: 11px; }
 
-  main { max-width: 760px; margin: 0 auto; padding: 6px 16px 40px; }
+  main { max-width: 700px; margin: 0 auto; padding: 6px 16px 40px; }
   section { display: none; }
   section.visible { display: block; animation: fadeIn .25s; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity:1; transform:none;} }
@@ -49,10 +49,10 @@
   }
   .card h2 { font-size: 21px; margin-bottom: 4px; }
   .card h3 { font-size: 16px; margin-bottom: 8px; color: #e6e6f5; }
-  .card p, .card li { font-size: 15px; line-height: 1.55; color: #c9c9de; }
+  .card p, .card li { font-size: 16px; line-height: 1.6; color: #c9c9de; }
   .card ul, .card ol { padding-left: 22px; margin: 8px 0; }
   .card li { margin-bottom: 6px; }
-  .muted { color: #8b8ba7; font-size: 13px; }
+  .muted { color: #9aa3c0; font-size: 14px; }
   .badge {
     display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
     text-transform: uppercase; color: #a78bfa; background: #2a1a4a; border-radius: 6px;
@@ -61,7 +61,7 @@
   .badge.time { color: #60a5fa; background: #142138; }
   .key {
     background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
-    padding: 12px 14px; margin: 10px 0; font-size: 15px; line-height: 1.5;
+    padding: 12px 14px; margin: 10px 0; font-size: 16px; line-height: 1.55;
   }
   .key b { color: #a78bfa; }
 
@@ -71,7 +71,7 @@
   }
   .checkpoint .cp-icon { font-size: 34px; }
   .checkpoint h3 { font-size: 18px; margin: 8px 0 6px; color: #fff; }
-  .checkpoint p { color: #c9c9de; font-size: 14px; line-height: 1.5; }
+  .checkpoint p { color: #d5d5e8; font-size: 15px; line-height: 1.5; }
 
   .step { display: flex; gap: 14px; margin-bottom: 14px; }
   .step-num {
@@ -80,7 +80,7 @@
     display: flex; align-items: center; justify-content: center; margin-top: 2px;
   }
   .step-body { flex: 1; }
-  .step-body p { font-size: 15px; line-height: 1.5; color: #e0e0f0; }
+  .step-body p { font-size: 16px; line-height: 1.55; color: #e0e0f0; }
   .step-body .muted { display: block; margin-top: 3px; }
   .step-body img {
     width: 100%; border-radius: 12px; border: 1px solid #2d2d4a; margin-top: 10px;
@@ -100,13 +100,13 @@
 
   .choice {
     display: block; width: 100%; text-align: left; background: #0f0f1a;
-    border: 1.5px solid #3d3d5c; border-radius: 12px; color: #e0e0f0; font-size: 15px;
+    border: 1.5px solid #3d3d5c; border-radius: 12px; color: #e0e0f0; font-size: 16px;
     line-height: 1.4; padding: 13px 15px; margin-bottom: 9px; cursor: pointer; -webkit-appearance: none;
   }
   .choice.correct { border-color: #34d399; background: #10291f; }
   .choice.wrong { border-color: #f87171; background: #2b1420; }
   .choice:disabled { cursor: default; }
-  .feedback { font-size: 14px; line-height: 1.5; margin: 6px 0 14px; display: none; }
+  .feedback { font-size: 15px; line-height: 1.5; margin: 6px 0 14px; display: none; }
   .feedback.show { display: block; }
   .feedback.good { color: #34d399; }
   .feedback.bad { color: #f8a3a3; }
@@ -116,11 +116,11 @@
     background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
     padding: 11px 14px; margin-bottom: 9px;
   }
-  .sort-item span { font-size: 14px; line-height: 1.35; color: #e0e0f0; flex: 1; }
+  .sort-item span { font-size: 15px; line-height: 1.35; color: #e0e0f0; flex: 1; }
   .sort-item .sort-btns { display: flex; gap: 6px; }
   .sort-item button {
     -webkit-appearance: none; border: 1.5px solid #3d3d5c; background: #1a1a2e; color: #c0c0d8;
-    border-radius: 9px; font-size: 12px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+    border-radius: 9px; font-size: 13px; font-weight: 700; padding: 11px 13px; cursor: pointer;
   }
   .sort-item.right { border-color: #34d399; }
   .sort-item.wrong2 { border-color: #f87171; }
@@ -130,11 +130,11 @@
     padding: 12px 14px; margin-bottom: 9px; cursor: pointer;
   }
   .post-card.picked { border-color: #60a5fa; background: #142138; }
-  .post-card p { font-size: 13px; color: #c9c9de; }
+  .post-card p { font-size: 15px; color: #c9c9de; }
 
   .copybox {
     background: #0f0f1a; border: 1px dashed #4a4a6a; border-radius: 10px;
-    padding: 12px 14px; font-size: 14px; color: #c9c9de; line-height: 1.55; margin: 10px 0;
+    padding: 12px 14px; font-size: 15px; color: #c9c9de; line-height: 1.55; margin: 10px 0;
     font-family: ui-monospace, Menlo, monospace;
   }
 
@@ -157,14 +157,14 @@
     background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 12px; padding: 13px 14px;
   }
   .tool h4 { font-size: 14px; color: #e6e6f5; margin-bottom: 3px; }
-  .tool p { font-size: 12px; color: #9a9ab5; line-height: 1.45; }
+  .tool p { font-size: 13px; color: #9a9ab5; line-height: 1.45; }
 
   .predict-word, .chipbtn {
     -webkit-appearance: none; background: #2a1a4a; border: 1.5px solid #a78bfa; color: #d6c6ff;
     border-radius: 10px; font-size: 15px; font-weight: 600; padding: 10px 14px; cursor: pointer;
     margin: 0 6px 8px 0;
   }
-  .chipbtn { background: #0f0f1a; border-color: #3d3d5c; color: #c0c0d8; font-size: 13px; }
+  .chipbtn { background: #0f0f1a; border-color: #3d3d5c; color: #c0c0d8; font-size: 14px; padding: 11px 15px; }
   .chipbtn.on { background: #2a1a4a; border-color: #a78bfa; color: #d6c6ff; }
   .sentence-box {
     background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 10px;
@@ -191,11 +191,11 @@
     background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
     padding: 10px 13px; margin-bottom: 8px;
   }
-  .train-item span { font-size: 14px; color: #e0e0f0; flex: 1; line-height: 1.35; }
+  .train-item span { font-size: 15px; color: #e0e0f0; flex: 1; line-height: 1.35; }
   .train-item .tbtns { display: flex; gap: 6px; }
   .train-item button {
     -webkit-appearance: none; border: 1.5px solid #3d3d5c; background: #1a1a2e; color: #c0c0d8;
-    border-radius: 9px; font-size: 12px; font-weight: 700; padding: 8px 10px; cursor: pointer;
+    border-radius: 9px; font-size: 13px; font-weight: 700; padding: 11px 13px; cursor: pointer;
   }
   .train-item button.sel-spam { border-color: #f87171; color: #f8a3a3; background: #2b1420; }
   .train-item button.sel-ok { border-color: #34d399; color: #7de8bc; background: #10291f; }
@@ -203,7 +203,7 @@
   /* bias game */
   .profile {
     background: #0f0f1a; border: 1.5px solid #3d3d5c; border-radius: 12px;
-    padding: 11px 14px; margin-bottom: 8px; font-size: 14px; color: #e0e0f0; line-height: 1.4;
+    padding: 12px 15px; margin-bottom: 8px; font-size: 15px; color: #e0e0f0; line-height: 1.4;
   }
   .profile b { color: #e6e6f5; }
   .profile .hire-btns { display: flex; gap: 8px; margin-top: 8px; }
@@ -216,8 +216,8 @@
   /* chat */
   .chatbox { background: #0f0f1a; border: 1px solid #3d3d5c; border-radius: 14px; overflow: hidden; }
   .chat-log { max-height: 340px; overflow-y: auto; padding: 14px; -webkit-overflow-scrolling: touch; }
-  .msg { max-width: 85%; border-radius: 14px; padding: 10px 13px; margin-bottom: 9px;
-    font-size: 14px; line-height: 1.5; white-space: pre-wrap; }
+  .msg { max-width: 85%; border-radius: 14px; padding: 11px 14px; margin-bottom: 9px;
+    font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
   .msg.user { background: #2a1a4a; border: 1px solid #a78bfa55; margin-left: auto; color: #eee6ff; }
   .msg.bot { background: #1a1a2e; border: 1px solid #2d2d4a; color: #d5d5e8; }
   .chat-input { display: flex; gap: 8px; padding: 10px; border-top: 1px solid #2d2d4a; }
