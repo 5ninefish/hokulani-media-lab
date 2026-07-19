@@ -2,9 +2,12 @@
 
 Students open ONE URL on their iPads: **https://5ninefish.github.io/hokulani-media-lab/**
 
-Stations unlock **in order** — each station's games and "Check yourself" quizzes
-must be completed before the green button unlocks the next station. You control
-the room only at the three ⏸ CHECKPOINT moments.
+Stations unlock **in order**, and inside each station content comes **one pane
+at a time** (Back / dots / Next) — research-backed segmenting: students see one
+chunk, do its activity, and Next stays locked until that pane's game or quiz is
+done (a hint under the dots says what's left). The CapCut build is an 11-step
+wizard, one screenshot per pane. You control the room only at the three
+⏸ CHECKPOINT moments.
 
 ## Before Monday (15 min of prep)
 
