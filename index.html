@@ -508,13 +508,14 @@
 
   <div class="card">
     <h3>🔬 Game 2: The sentiment machine</h3>
-    <p>Platforms run <b>analytical AI</b> on billions of posts to sort them as positive, negative, or neutral. Type a fake social media post (about food, a game, school lunch, anything) and run it through a mini sentiment AI:</p>
+    <p>Platforms run <b>analytical AI</b> on billions of posts to sort them as positive, negative, or neutral. Type a fake social media post (about food, a game, school lunch, anything) and two AIs will judge it — an old-school <b>word-matcher</b> and a modern <b>neural AI</b>:</p>
     <div class="senti-input">
       <input id="sentiInput" type="text" maxlength="120" placeholder='e.g. "Best plate lunch ever, but the line was brutal"' autocomplete="off">
       <button class="btn small" id="sentiBtn">Analyze</button>
     </div>
     <div id="sentiOut"></div>
-    <p class="muted" style="margin-top:6px">This toy AI just matches word patterns against a scored list — the real ones learned their patterns from millions of labeled posts, but the idea is identical.</p>
+    <div id="sentiNeural"></div>
+    <p class="muted" style="margin-top:6px">The word-matcher only counts scored words — 2005-era tech. The neural AI learned patterns from millions of real posts. <b>Try to fool them:</b> sarcasm, slang, or a complaint with no "bad" words. Which one breaks first?</p>
   </div>
 
   <div class="card">
@@ -1103,26 +1104,52 @@ posts.sort(() => Math.random() - .5).forEach((p) => {
   feedMount.appendChild(d);
 });
 
-// sentiment machine
-const POS = ['best','love','amazing','great','awesome','ono','delicious','fun','win','beautiful','happy','perfect','favorite','excited','cool'];
-const NEG = ['worst','hate','terrible','awful','gross','boring','brutal','sad','angry','bad','slow','broken','annoying','fail','ugly'];
+// sentiment machine — toy word-matcher (with negation + "too X") vs neural AI
+const POS = ['best','love','loved','like','liked','amazing','great','awesome','ono','delicious','tasty','yum','fresh','fun','win','beautiful','happy','perfect','favorite','excited','cool','fire','goated'];
+const NEG = ['worst','hate','hated','terrible','awful','gross','nasty','yuck','boring','brutal','sad','angry','bad','slow','stale','crowded','broken','annoying','fail','ugly','mid','trash'];
+const NEGATORS = ['not','never',"didn't","don't","doesn't","wasn't","isn't","can't",'no'];
 document.getElementById('sentiBtn').onclick = () => {
   const text = document.getElementById('sentiInput').value.trim();
   if (!text) return;
-  const words = text.toLowerCase().replace(/[^a-z\s']/g, '').split(/\s+/);
+  const words = text.toLowerCase().replace(/[^a-z\s']/g, '').split(/\s+/).filter(Boolean);
   let score = 0;
-  const marked = words.map(w => {
-    if (POS.includes(w)) { score++; return '<span class="senti-word pos">' + w + '</span>'; }
-    if (NEG.includes(w)) { score--; return '<span class="senti-word neg">' + w + '</span>'; }
+  const marked = words.map((w, i) => {
+    const negated = i > 0 && (NEGATORS.includes(words[i-1]) || (i > 1 && NEGATORS.includes(words[i-2])));
+    const tooX = i > 0 && words[i-1] === 'too';           // "too spicy", "too long"
+    if (POS.includes(w)) {
+      score += negated ? -1 : 1;                          // "didn't like" flips
+      return '<span class="senti-word ' + (negated ? 'neg' : 'pos') + '">' + (negated ? '⤵ ' : '') + w + '</span>';
+    }
+    if (NEG.includes(w)) {
+      score += negated ? 1 : -1;
+      return '<span class="senti-word ' + (negated ? 'pos' : 'neg') + '">' + (negated ? '⤵ ' : '') + w + '</span>';
+    }
+    if (tooX) { score--; return '<span class="senti-word neg">too→' + w + '</span>'; }
     return '<span class="senti-word neu">' + w + '</span>';
   }).join(' ');
   const verdict = score > 0 ? ['POSITIVE 😊', '#7de8bc'] : score < 0 ? ['NEGATIVE 😠', '#f8a3a3'] : ['NEUTRAL 😐', '#9ec8ff'];
   document.getElementById('sentiOut').innerHTML =
     '<div style="margin:8px 0">' + marked + '</div>' +
-    '<div class="score-pill" style="border-color:' + verdict[1] + ';color:' + verdict[1] + '">Classified: ' + verdict[0] + '</div>' +
-    '<p class="muted" style="margin-top:8px">An ad platform would now ' +
-    (score > 0 ? 'boost this post to similar users and sell ads next to it.' : score < 0 ? 'show it less, or flag it for review.' : 'need more signals — maybe your emoji or watch time.') + '</p>';
+    '<div class="score-pill" style="border-color:' + verdict[1] + ';color:' + verdict[1] + '">🔤 Word-matcher: ' + verdict[0] + '</div>';
   req('algorithm', 'sentiment');
+  // neural verdict via worker
+  const neuralEl = document.getElementById('sentiNeural');
+  neuralEl.innerHTML = '<div class="score-pill" style="opacity:.6">🧠 Neural AI: thinking…</div>';
+  fetch(WORKER + '/sentiment', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  }).then(r => r.json()).then(j => {
+    if (!j.label) throw new Error('no label');
+    const col = j.label === 'POSITIVE' ? '#7de8bc' : j.label === 'NEGATIVE' ? '#f8a3a3' : '#9ec8ff';
+    const emoji = j.label === 'POSITIVE' ? '😊' : j.label === 'NEGATIVE' ? '😠' : '😐';
+    const agree = j.label === verdict[0].split(' ')[0];
+    neuralEl.innerHTML =
+      '<div class="score-pill" style="border-color:' + col + ';color:' + col + '">🧠 Neural AI: ' + j.label + ' ' + emoji + '</div>' +
+      (j.reason ? '<p class="muted" style="margin-top:6px">🧠 says: "' + j.reason + '"</p>' : '') +
+      '<p class="muted" style="margin-top:4px">' + (agree
+        ? 'Both AIs agree. An ad platform would now ' + (j.label === 'POSITIVE' ? 'boost this post and sell ads next to it.' : j.label === 'NEGATIVE' ? 'show it less, or flag it for review.' : 'wait for more signals — emoji, watch time, replies.')
+        : '⚡ They disagree! The word-matcher can only count words — the neural AI understands context. This is why platforms replaced word lists with machine learning.') + '</p>';
+  }).catch(() => { neuralEl.innerHTML = '<p class="muted">🧠 Neural AI is offline — the word-matcher has you covered today.</p>'; });
 };
 document.getElementById('sentiInput').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('sentiBtn').click(); });
 
